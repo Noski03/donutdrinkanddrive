@@ -1,0 +1,305 @@
+/* Grunnleggende instillinger */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0b0b0b; /* Nesten helt svart */
+  font-family: "Inter", sans-serif;
+  color: white;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Header Styling */
+.main-header {
+  background-color: rgba(11, 11, 11, 0.95); /* Litt gjennomsiktig */
+  border-bottom: 2px solid #4b0082; /* Mørkelilla stripe nederst */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Logo */
+.logo {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.logo .donut {
+  color: #9d32a8; /* Din mørkelilla farge */
+}
+
+.logo .drive {
+  color: #ffffff;
+}
+
+/* Navigasjon */
+.nav-menu ul {
+  display: flex;
+  list-style: none;
+}
+
+.nav-menu ul li {
+  margin: 0 20px;
+}
+
+.nav-menu ul li a {
+  text-decoration: none;
+  color: #e0e0e0;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.nav-menu ul li a:hover {
+  color: #9d32a8; /* Lilla ved hover */
+}
+
+/* Knapp i headeren */
+.btn-lilla {
+  background-color: #9d32a8;
+  color: white;
+  padding: 10px 25px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: bold;
+  font-size: 0.8rem;
+  box-shadow: 0 0 15px rgba(157, 50, 168, 0.4);
+  transition: 0.3s;
+}
+
+.btn-lilla:hover {
+  background-color: #bc3fd0;
+  box-shadow: 0 0 25px rgba(157, 50, 168, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Hero Seksjon */
+.hero {
+  position: relative;
+  height: 85vh; /* Dekker 85% av skjermhøyden */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  color: white;
+}
+
+.video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-color: #0b0b0b; /* Basisfarge */
+}
+
+/* Dette skaper selve rute-mønsteret */
+.video-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Lager 20px x 20px ruter */
+  background-image:
+    linear-gradient(45deg, #1a002e 25%, transparent 25%),
+    linear-gradient(-45deg, #1a002e 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1a002e 75%),
+    linear-gradient(-45deg, transparent 75%, #1a002e 75%);
+  background-size: 40px 40px;
+  background-position:
+    0 0,
+    0 20px,
+    20px -20px,
+    -20px 0px;
+
+  /* Dette gjør at mønsteret fader ut nedover */
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
+
+  opacity: 0.4; /* Juster denne for hvor tydelig flagget skal være */
+  z-index: 1;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Sørger for at videoen fyller ut uten å strekkes */
+}
+
+/* Det lilla filteret over videoen */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* En mørk fade som binder alt sammen */
+  background: linear-gradient(
+    to bottom,
+    rgba(11, 11, 11, 0.2) 0%,
+    rgba(11, 11, 11, 1) 95%
+  );
+  z-index: 2;
+}
+
+/* Tekst-styling */
+.hero-content h1 {
+  font-family: "Orbitron", sans-serif;
+  font-size: 4rem;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(157, 50, 168, 0.8);
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto 30px;
+  line-height: 1.6;
+}
+
+/* Knapper i Hero */
+.hero-btns {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.btn-lilla-lg {
+  background-color: #9d32a8;
+  color: white;
+  padding: 18px 40px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: 0.3s;
+  box-shadow: 0 0 20px rgba(157, 50, 168, 0.5);
+}
+
+.btn-lilla-lg:hover {
+  background-color: #bc3fd0;
+  transform: scale(1.05);
+  box-shadow: 0 0 35px rgba(157, 50, 168, 0.8);
+}
+
+.btn-outline {
+  border: 2px solid white;
+  color: white;
+  padding: 18px 40px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-outline:hover {
+  background: white;
+  color: black;
+}
+/* Layout for seksjonen */
+.features {
+  padding: 80px 0;
+  background-color: #0b0b0b;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  align-items: stretch; /* Sørger for at alle kortene har samme høyde */
+}
+
+.grid-3 :nth-child(2) h3 {
+  /* Gjør tittelen litt mindre */
+  font-size: 1.3rem;
+}
+
+/* Styling av hvert kort */
+.feature-card {
+  background: #151515;
+  border: 1px solid #222;
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 15px;
+  transition: all 0.4s ease;
+
+  /* Flexbox-oppsett for å kontrollere innholdet */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+/* Den lilla hover-effekten */
+.feature-card:hover {
+  border-color: #9d32a8;
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(157, 50, 168, 0.2);
+}
+
+/* Gjør den midterste boksen litt mer "spesiell" (valgfritt) */
+.feature-card.highlight {
+  border-color: #4b0082;
+}
+
+/* Tekst i kortene */
+.feature-card h3 {
+  font-family: "Orbitron", sans-serif;
+  color: #fff;
+  font-size: 1.5rem;
+  margin: 20px 0;
+  text-transform: uppercase;
+}
+
+.feature-card p {
+  color: #bbb;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.icon {
+  font-size: 3rem;
+}
+
+.btn-text {
+  margin-top: auto;
+  color: #9d32a8;
+  text-decoration: none;
+  font-family: "Orbitron", sans-serif;
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.btn-text:hover {
+  color: #fff;
+}
