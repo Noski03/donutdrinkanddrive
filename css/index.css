@@ -303,3 +303,62 @@ body {
 .btn-text:hover {
   color: #fff;
 }
+/* --- REVEAL SECTION STYLING --- */
+.reveal-section {
+  padding: 100px 0;
+  background-color: #0b0b0b;
+}
+
+.reveal-container {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  max-width: 90vw;
+  max-height: 90vw;
+  border-radius: 20px; /* Kan endres til 50% for sirkel */
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(157, 50, 168, 0.3);
+  cursor: none; /* Skjuler musa inni bildet */
+  touch-action: none; /* Viktig for mobil */
+  border: 2px solid #4b0082;
+}
+
+.base-layer,
+.reveal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+.mask-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  /* Her er magien fra Northweb-oppgaven din */
+  clip-path: ellipse(
+    var(--rx, 0px) var(--ry, 0px) at var(--x, 50%) var(--y, 50%)
+  );
+}
+
+/* Responsiv layout for split-view */
+.split {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  justify-content: center;
+}
+
+@media (max-width: 992px) {
+  .split {
+    flex-direction: column;
+    text-align: center;
+  }
+}
