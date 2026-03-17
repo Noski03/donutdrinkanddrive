@@ -1,0 +1,335 @@
+/* ==========================================================================
+   DONUTDRIVE - PRO RACING SERVICES STYLE
+   ========================================================================== */
+
+:root {
+  --electric-purple: #9d32a8;
+  --neon-glow: rgba(157, 50, 168, 0.6);
+  --dark-bg: #0b0b0b;
+  --card-bg: rgba(25, 25, 25, 0.8);
+}
+
+body {
+  background-color: var(--dark-bg);
+  color: white;
+  font-family: "Inter", sans-serif;
+  margin: 0;
+}
+
+/* --- HERO SECTION --- */
+.services-hero {
+  padding: 140px 0 80px;
+  text-align: center;
+  background: radial-gradient(circle at top right, #1a0b1c 0%, #0b0b0b 70%);
+}
+
+.services-hero h1 {
+  font-size: clamp(50px, 10vw, 90px);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic; /* Gir en følelse av fart */
+  letter-spacing: -3px;
+  line-height: 0.9;
+  margin-bottom: 20px;
+}
+
+.purple-text {
+  color: var(--electric-purple);
+  text-shadow:
+    0 0 20px var(--neon-glow),
+    0 0 40px var(--neon-glow);
+}
+
+/* --- PRICING GRID --- */
+.pricing-section {
+  padding-bottom: 120px;
+}
+
+/* Sentrerer hele grid-en på siden */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  justify-items: center;
+}
+
+/* --- RACING CARDS (CONTAINERNE) --- */
+.price-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px); /* Glassmorphism */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 50px 40px;
+  position: relative;
+  overflow: hidden; /* For "fartstriper" i bakgrunnen */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Subtile fartstriper i bakgrunnen på kortet */
+.price-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(157, 50, 168, 0.05));
+  transform: skewX(-20deg) translateX(50px);
+}
+
+.price-card:hover {
+  transform: translateY(-15px) scale(1.02);
+  border-color: var(--electric-purple);
+  box-shadow: 0 0 40px rgba(157, 50, 168, 0.3);
+}
+
+/* Featured / PRO-kortet */
+.price-card.featured {
+  border: 2px solid var(--electric-purple);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 10, 35, 0.9),
+    rgba(20, 20, 20, 0.9)
+  );
+  box-shadow: 0 0 30px rgba(157, 50, 168, 0.2);
+}
+
+.popular-tag {
+  position: absolute;
+  top: 20px;
+  right: -30px;
+  background: var(--electric-purple);
+  color: white;
+  padding: 5px 40px;
+  font-size: 11px;
+  font-weight: 900;
+  transform: rotate(45deg); /* Racing-tag stil */
+  box-shadow: 0 0 15px var(--neon-glow);
+}
+
+/* --- INNHOLD I KORTENE --- */
+.card-header h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 0;
+  font-style: italic;
+  color: #eee;
+}
+
+.price {
+  font-size: 4rem;
+  font-weight: 900;
+  margin: 25px 0;
+  letter-spacing: -2px;
+}
+
+.price span {
+  font-size: 1.2rem;
+  color: #666;
+  font-style: normal;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 40px;
+  flex-grow: 1;
+}
+
+.features li {
+  padding: 12px 0;
+  color: #aaa;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.features li::before {
+  content: "🏁"; /* Racing flagg-ikon */
+  margin-right: 12px;
+  filter: grayscale(1) brightness(1.5);
+}
+
+/* --- KNAPPER --- */
+.btn-primary,
+.btn-outline {
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: var(--electric-purple);
+  color: white;
+  box-shadow: 0 5px 15px var(--neon-glow);
+}
+
+.btn-primary:hover {
+  background: #c03cd0;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px var(--electric-purple);
+}
+
+.btn-outline {
+  border: 2px solid #333;
+  color: white;
+}
+
+.btn-outline:hover {
+  border-color: var(--electric-purple);
+  background: rgba(157, 50, 168, 0.1);
+}
+
+/* --- MOBIL-TILPASNING --- */
+@media (max-width: 768px) {
+  .services-hero h1 {
+    font-size: 50px;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* --- MODERN RACING FOOTER --- */
+.main-footer {
+  position: relative;
+  background: #080808;
+  padding: 80px 0 30px;
+  border-top: 1px solid rgba(157, 50, 168, 0.2);
+  margin-top: 100px;
+  overflow: hidden;
+}
+
+/* En lilla glød som ligger helt øverst i footeren */
+.footer-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 2px;
+  background: var(--electric-purple, #9d32a8);
+  box-shadow: 0 0 20px var(--electric-purple, #9d32a8);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  gap: 60px;
+  margin-bottom: 60px;
+}
+
+.footer-brand .logo-text {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.footer-brand p {
+  color: #888;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.footer-grid h4 {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: var(--electric-purple, #9d32a8);
+  margin-bottom: 25px;
+  text-transform: uppercase;
+}
+
+.footer-links ul,
+.footer-contact ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li,
+.footer-contact li {
+  margin-bottom: 12px;
+  color: #aaa;
+  font-size: 0.95rem;
+}
+
+.footer-links a {
+  color: #aaa;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-links a:hover {
+  color: white;
+  padding-left: 5px; /* Liten animasjon på hover */
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.8rem;
+  transition: 0.3s;
+}
+
+.social-link:hover {
+  border-color: var(--electric-purple, #9d32a8);
+  background: rgba(157, 50, 168, 0.1);
+  transform: translateY(-3px);
+}
+
+/* Copyright area */
+.footer-bottom {
+  padding-top: 30px;
+  border-top: 1px solid #1a1a1a;
+  text-align: center;
+  color: #555;
+  font-size: 0.85rem;
+}
+
+/* Responsiv footer */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .footer-brand p {
+    margin: 0 auto;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+}
