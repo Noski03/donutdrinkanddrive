@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Din Opplevelse | DonutDrive</title>
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/booking.css" />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
+    ></script>
+  </head>
+  <body class="booking-page">
+    <header class="navbar">
+      <div class="container">
+        <div class="logo">
+          <span class="donut">DONUT</span><span class="drive">DRINK</span
+          ><span class="donut">AND</span><span class="drive">DRIVE</span>
+        </div>
+        <nav class="nav-menu">
+          <ul>
+            <li><a href="/index.html">Hjem</a></li>
+            <li><a href="/html/leaderboard.html">Banerekorder</a></li>
+            <li><a href="/html/tjenester.html">Tjenester</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="booking-hero">
+        <h1>BOOK DIN <span class="glow-text">SESSION</span></h1>
+        <p>Velg den pakken som passer ditt ambisjonsnivå.</p>
+      </section>
+
+      <div class="packages-grid">
+        <div class="booking-card">
+          <div class="card-header">
+            <h3>The Rookie</h3>
+            <div class="price">199,-</div>
+          </div>
+          <ul class="features">
+            <li>1 x 15 min kjøring</li>
+            <li>Gjennomgang av bane</li>
+            <li>Digitalt resultat</li>
+          </ul>
+          <button
+            type="button"
+            class="btn-select"
+            onclick="selectPackage('The Rookie')"
+          >
+            Velg denne
+          </button>
+        </div>
+
+        <div class="booking-card featured">
+          <div class="badge">Anbefalt</div>
+          <div class="card-header">
+            <h3>Pro Racer</h3>
+            <div class="price">349,-</div>
+          </div>
+          <ul class="features">
+            <li>2 x 15 min kjøring</li>
+            <li>Telemetri-analyse</li>
+            <li>Prioritert kø</li>
+            <li>1 valgfri drikke</li>
+          </ul>
+          <button
+            type="button"
+            class="btn-select"
+            onclick="selectPackage('Pro Racer')"
+          >
+            Velg denne
+          </button>
+        </div>
+
+        <div class="booking-card">
+          <div class="card-header">
+            <h3>Grand Prix</h3>
+            <div class="price">599,-</div>
+          </div>
+          <ul class="features">
+            <li>3 x 20 min kjøring</li>
+            <li>Full race-simulator</li>
+            <li>Medalje-seremoni</li>
+            <li>Pizza & Drikke inkl.</li>
+          </ul>
+          <button
+            type="button"
+            class="btn-select"
+            onclick="selectPackage('Grand Prix')"
+          >
+            Velg denne
+          </button>
+        </div>
+      </div>
+
+      <section class="form-section">
+        <div class="form-container disabled" id="booking-section">
+          <h3>
+            Fullfør din booking:
+            <span id="selected-package-display">Ingen valgt</span>
+          </h3>
+          <form class="actual-form" id="email-form">
+            <input type="hidden" name="package" id="package-input" value="" />
+
+            <div class="form-row">
+              <input type="text" name="from_name" placeholder="Navn" required />
+              <input
+                type="email"
+                name="reply_to"
+                placeholder="E-post"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <input type="date" name="date" required id="date-picker" />
+              <select name="time" required>
+                <option value="">Velg tid</option>
+                <option value="14:00">14:00</option>
+                <option value="16:00">16:00</option>
+                <option value="18:00">18:00</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-confirm" id="submit-btn">
+              SEND FORESPØRSEL
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+    <script src="/js/booking.js"></script>
+  </body>
+</html>
