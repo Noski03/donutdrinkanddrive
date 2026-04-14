@@ -1,6 +1,6 @@
 (function () {
-  // Erstatt med din faktiske Public Key fra EmailJS
-  emailjs.init("DIN_PUBLIC_KEY");
+  // Her har jeg satt inn din Public Key: 5SuUIn7ldp9MurDAm
+  emailjs.init("5SuUIn7ldp9MurDAm");
 })();
 
 const SHEETBEST_URL =
@@ -88,8 +88,8 @@ document
       });
 
       // 4. Send e-post via EmailJS
-      // VIKTIG: Bytt ut 'service_8erarue' og 'template_id' med dine egne
-      await emailjs.send("service_8erarue", "DIN_TEMPLATE_ID", emailParams);
+      // Her har jeg satt inn din Template ID: template_baqv2nx
+      await emailjs.send("service_8erarue", "template_baqv2nx", emailParams);
 
       alert(
         "Takk! Forespørsel sendt. Sjekk e-posten din for bekreftelse og Vipps-info.",
