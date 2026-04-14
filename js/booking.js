@@ -5,7 +5,7 @@
 
 const SHEETBEST_URL =
   "https://api.sheetbest.com/sheets/078a2b91-e632-4fa0-865a-af80a0cf77a2";
-const MAX_SETS = 4;
+const MAX_SETS = 5;
 
 // Funksjon for å velge pakke og scrolle ned
 function selectPackage(packageName) {
