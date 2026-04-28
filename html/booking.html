@@ -107,6 +107,16 @@
 
             <div class="form-row">
               <input type="text" name="from_name" placeholder="Navn" required />
+
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Telefonnummer"
+                required
+              />
+            </div>
+
+            <div class="form-row">
               <input
                 type="email"
                 name="reply_to"
@@ -114,6 +124,7 @@
                 required
               />
             </div>
+
             <div class="form-row">
               <select name="seats" id="seat-picker" required>
                 <option value="1">1 Person</option>
@@ -122,6 +133,7 @@
                 <option value="4">4 Personer (Full gruppe)</option>
               </select>
             </div>
+
             <div class="form-row">
               <input type="date" name="date" required id="date-picker" />
               <select name="time" required>
@@ -131,6 +143,7 @@
                 <option value="18:00">18:00</option>
               </select>
             </div>
+
             <button type="submit" class="btn-confirm" id="submit-btn">
               SEND FORESPØRSEL
             </button>

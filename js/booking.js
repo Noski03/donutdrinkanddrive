@@ -1,5 +1,5 @@
 (function () {
-  // Her har jeg satt inn din Public Key: 5SuUIn7ldp9MurDAm
+  // Din Public Key
   emailjs.init("5SuUIn7ldp9MurDAm");
 })();
 
@@ -7,7 +7,6 @@ const SHEETBEST_URL =
   "https://api.sheetbest.com/sheets/078a2b91-e632-4fa0-865a-af80a0cf77a2";
 const MAX_SETS = 5;
 
-// Funksjon for å velge pakke og scrolle ned
 function selectPackage(packageName) {
   const display = document.getElementById("selected-package-display");
   const input = document.getElementById("package-input");
@@ -42,7 +41,6 @@ document
 
       const bookings = await response.json();
 
-      // Finn ut hvor mange seter som er opptatt på valgt dato og tid
       const occupied = bookings
         .filter((b) => b.date === data.date && b.time === data.time)
         .reduce((sum, b) => sum + parseInt(b.seats || 0), 0);
@@ -58,7 +56,7 @@ document
         return;
       }
 
-      // 2. Regn ut pris og 12% MVA for EmailJS
+      // 2. Regn ut pris og 12% MVA
       const priser = {
         "The Rookie": 199,
         "Pro Racer": 349,
@@ -70,16 +68,15 @@ document
       const netto = Math.round(totalt / 1.12);
       const mva = totalt - netto;
 
-      // Pakk dataene for EmailJS
       const emailParams = {
-        ...data,
+        ...data, // Dette inkluderer nå "phone" automatisk fra HTML!
         price_per_unit: prisPerEnhet,
         net_amount: netto,
         mva_amount: mva,
         total_amount: totalt,
       };
 
-      // 3. Lagre i Google Sheets
+      // 3. Lagre i Google Sheets (Inkluderer nå phone og reply_to)
       await fetch(SHEETBEST_URL, {
         method: "POST",
         mode: "cors",
@@ -88,14 +85,15 @@ document
       });
 
       // 4. Send e-post via EmailJS
-      // Her har jeg satt inn din Template ID: template_baqv2nx
       await emailjs.send("service_8erarue", "template_baqv2nx", emailParams);
 
+      // Oppdatert alert med beskjed om telefon og søppelpost
       alert(
-        "Takk! Forespørsel sendt. Sjekk e-posten din for bekreftelse og Vipps-info.",
+        `Takk, ${data.from_name}! Forespørsel er sendt.\n\n` +
+          `Vi har registrert tlf: ${data.phone}.\n` +
+          `VIKTIG: Sjekk søppelpost-mappen din hvis du ikke ser bekreftelsen i innboksen!`,
       );
 
-      // Nullstill skjema
       this.reset();
       document.getElementById("booking-section").classList.add("disabled");
       document.getElementById("selected-package-display").innerText =
@@ -103,7 +101,7 @@ document
     } catch (error) {
       console.error("Systemfeil:", error);
       alert(
-        "Det skjedde en feil under booking. Vennligst sjekk at du har fylt ut alle felt eller prøv igjen senere.",
+        "Det skjedde en feil. Vennligst sjekk alle felt eller prøv igjen senere.",
       );
     } finally {
       btn.innerText = originalText;
