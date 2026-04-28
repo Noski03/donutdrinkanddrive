@@ -87,13 +87,18 @@ document
       // 4. Send e-post via EmailJS
       await emailjs.send("service_8erarue", "template_baqv2nx", emailParams);
 
-      // Oppdatert alert med beskjed om telefon og søppelpost
+      // DENNE DELEN VISER MELDINGEN
       alert(
-        `Takk, ${data.from_name}! Forespørsel er sendt.\n\n` +
-          `Vi har registrert tlf: ${data.phone}.\n` +
-          `VIKTIG: Sjekk søppelpost-mappen din hvis du ikke ser bekreftelsen i innboksen!`,
+        "Takk, " +
+          data.from_name +
+          "! Forespørsel er sendt.\n\n" +
+          "Vi har registrert tlf: " +
+          data.phone +
+          ".\n\n" +
+          "VIKTIG: Sjekk søppelpost-mappen din hvis du ikke ser bekreftelsen i innboksen!",
       );
 
+      // Nullstill skjema og lukk seksjonen
       this.reset();
       document.getElementById("booking-section").classList.add("disabled");
       document.getElementById("selected-package-display").innerText =
