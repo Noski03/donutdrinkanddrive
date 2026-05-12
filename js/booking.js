@@ -3,8 +3,10 @@
   emailjs.init("5SuUIn7ldp9MurDAm");
 })();
 
+// HER LIMER DU INN DEN NYE LENKEN FRA SJEFEN DIN:
 const SHEETBEST_URL =
-  "https://api.sheetbest.com/sheets/078a2b91-e632-4fa0-865a-af80a0cf77a2";
+  "https://api.sheetbest.com/sheets/78eb891c-7f42-4ed9-8290-759dc526528a";
+
 const MAX_SETS = 5;
 
 function selectPackage(packageName) {
@@ -35,7 +37,7 @@ document
     const data = Object.fromEntries(formData.entries());
 
     try {
-      // 1. Hent bookinger for å sjekke kapasitet
+      // 1. Hent bookinger for å sjekke kapasitet via sjefens nye kobling
       const response = await fetch(SHEETBEST_URL);
       if (!response.ok) throw new Error("Kunne ikke koble til SheetBest");
 
@@ -69,14 +71,14 @@ document
       const mva = totalt - netto;
 
       const emailParams = {
-        ...data, // Dette inkluderer nå "phone" automatisk fra HTML!
+        ...data,
         price_per_unit: prisPerEnhet,
         net_amount: netto,
         mva_amount: mva,
         total_amount: totalt,
       };
 
-      // 3. Lagre i Google Sheets (Inkluderer nå phone og reply_to)
+      // 3. Lagre i Google Sheets på sjefens konto
       await fetch(SHEETBEST_URL, {
         method: "POST",
         mode: "cors",
@@ -87,7 +89,6 @@ document
       // 4. Send e-post via EmailJS
       await emailjs.send("service_8erarue", "template_baqv2nx", emailParams);
 
-      // DENNE DELEN VISER MELDINGEN
       alert(
         "Takk, " +
           data.from_name +
@@ -98,7 +99,6 @@ document
           "VIKTIG: Sjekk søppelpost-mappen din hvis du ikke ser bekreftelsen i innboksen!",
       );
 
-      // Nullstill skjema og lukk seksjonen
       this.reset();
       document.getElementById("booking-section").classList.add("disabled");
       document.getElementById("selected-package-display").innerText =
