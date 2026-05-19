@@ -28,8 +28,8 @@ body {
   min-height: 100vh;
 }
 
-/* Container som tvinger alt til midten */
-.container {
+/* Sørger for at denne KUN styler containerne som ligger inni selve hovedsiden */
+.leaderboard-page .container {
   width: 100%;
   max-width: 1100px;
   padding: 0 20px;

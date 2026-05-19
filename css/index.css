@@ -21,55 +21,93 @@ body {
 }
 
 /* Header Styling */
+/* ==========================================================================
+   NY HEADER-STYLING MED BÅDE BIL-LOGO OG TEKST
+   ========================================================================== */
+
 .main-header {
-  background-color: rgba(11, 11, 11, 0.95); /* Litt gjennomsiktig */
-  border-bottom: 2px solid #4b0082; /* Mørkelilla stripe nederst */
+  background-color: rgba(11, 11, 11, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid #4b0082;
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
 }
 
-/* Logo */
-.logo {
+.main-header .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between; /* Logo til venstre, meny i midten, knapp til høyre */
+  align-items: center;
+  padding: 15px 20px;
+}
+
+/* Hovedboksen for hele logoen */
+.main-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Avstand mellom bil-bildet og teksten */
+}
+
+/* Størrelsen på selve bil-logoen */
+.main-header .logo-img {
+  height: 40px; /* Juster denne hvis du vil ha bil-bildet større eller mindre */
+  width: auto;
+  display: block;
+}
+
+/* Selve tekstboksen - tvinger ordene sammen på én linje */
+.main-header .logo-text-wrapper {
   font-family: "Orbitron", sans-serif;
   font-size: 1.5rem;
   font-weight: bold;
   letter-spacing: 2px;
+  display: flex;
+  gap: 0; /* ABSOLUTT NULL mellomrom mellom DONUT, DRINK, AND, DRIVE */
+  white-space: nowrap;
 }
 
-.logo .donut {
-  color: #9d32a8; /* Din mørkelilla farge */
+.main-header .logo-text-wrapper span {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
 }
 
-.logo .drive {
-  color: #ffffff;
+.main-header .logo .donut {
+  color: #9d32a8; /* Lilla tekst */
 }
 
-/* Navigasjon */
-.nav-menu ul {
+.main-header .logo .drive {
+  color: #ffffff; /* Hvit tekst */
+}
+
+/* --- NAVIGASJONSMENY --- */
+.main-header .nav-menu ul {
   display: flex;
   list-style: none;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-menu ul li {
-  margin: 0 20px;
-}
-
-.nav-menu ul li a {
+.main-header .nav-menu ul li a {
   text-decoration: none;
   color: #e0e0e0;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: uppercase;
   font-size: 0.9rem;
-  transition: 0.3s;
+  transition: 0.3s ease;
 }
 
-.nav-menu ul li a:hover {
-  color: #9d32a8; /* Lilla ved hover */
+.main-header .nav-menu ul li a:hover {
+  color: #9d32a8;
+  text-shadow: 0 0 10px rgba(157, 50, 168, 0.5);
 }
 
-/* Knapp i headeren */
-.btn-lilla {
+/* --- BUTTON / CTA --- */
+.main-header .btn-lilla {
   background-color: #9d32a8;
   color: white;
   padding: 10px 25px;
@@ -78,16 +116,17 @@ body {
   font-family: "Orbitron", sans-serif;
   font-weight: bold;
   font-size: 0.8rem;
+  letter-spacing: 1px;
   box-shadow: 0 0 15px rgba(157, 50, 168, 0.4);
-  transition: 0.3s;
+  transition: 0.3s ease;
+  display: inline-block;
 }
 
-.btn-lilla:hover {
+.main-header .btn-lilla:hover {
   background-color: #bc3fd0;
   box-shadow: 0 0 25px rgba(157, 50, 168, 0.7);
   transform: translateY(-2px);
 }
-
 /* Hero Seksjon */
 .hero {
   position: relative;
@@ -409,20 +448,22 @@ body {
   margin: 0;
   padding: 0;
 }
-
 .nav-menu a {
   text-decoration: none;
-  color: #ccc;
+  color: #ccc !important; /* Standardfarge på lenkene (lys grå) */
+  font-family: "Inter", sans-serif;
   font-weight: 700;
   font-size: 0.9rem;
   text-transform: uppercase;
+  letter-spacing: 1px;
   transition: 0.3s;
 }
 
+/* Her skjer magien: Teksten blir lilla OG får lilla glød når du hovrer eller er på aktiv side */
 .nav-menu a:hover,
 .nav-menu a.active {
-  color: white;
-  text-shadow: 0 0 10px var(--neon-glow);
+  color: #9d32a8 !important; /* Endrer tekstfargen til lilla */
+  text-shadow: 0 0 15px rgba(157, 50, 168, 0.8); /* Den fete lilla gløden */
 }
 
 /* Knappen i menyen */
