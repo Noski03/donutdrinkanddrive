@@ -588,3 +588,320 @@ body {
     justify-content: center;
   }
 }
+/* --- AKTIVER SILKEMYK RULLING --- */
+
+html {
+  scroll-behavior: smooth;
+
+  /* Gjør at den faste headeren ikke kutter toppen av overskriftene når du ruller ned */
+
+  scroll-padding-top: 100px;
+}
+
+/* --- DETALJSEKSJONER BASE --- */
+
+.details-page-section {
+  width: 100%;
+
+  padding: 120px 0;
+
+  border-bottom: 1px solid #1a1a1a;
+
+  box-sizing: border-box;
+}
+
+/* Annethvert felt har litt mørkere bakgrunn for variasjon */
+
+.details-page-section.alt-bg {
+  background-color: #0d0d0d;
+
+  border-top: 1px solid rgba(157, 50, 168, 0.05);
+
+  border-bottom: 1px solid rgba(157, 50, 168, 0.05);
+}
+
+.details-grid {
+  display: grid;
+
+  grid-template-columns: 1.2fr 1fr;
+
+  gap: 60px;
+
+  align-items: center;
+
+  width: 100%;
+}
+
+/* Snur rekkefølgen på midterste kort (Grupper) for en kul layout */
+
+.details-grid.reverse {
+  grid-template-columns: 1fr 1.2fr;
+}
+
+/* --- TEKSTSTYLING --- */
+
+.section-tag {
+  font-family: "Orbitron", sans-serif;
+
+  color: #9d32a8;
+
+  font-size: 0.85rem;
+
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  display: block;
+
+  margin-bottom: 10px;
+}
+
+.details-text h2 {
+  font-family: "Orbitron", sans-serif;
+
+  font-size: clamp(2rem, 5vw, 3rem);
+
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  margin: 0 0 25px 0;
+}
+
+.purple-glow {
+  color: #9d32a8;
+
+  text-shadow: 0 0 15px rgba(157, 50, 168, 0.5);
+}
+
+.details-text p {
+  color: #ccc;
+
+  font-size: 1.1rem;
+
+  line-height: 1.7;
+
+  margin-bottom: 30px;
+}
+
+/* --- LISTER --- */
+
+.details-list {
+  list-style: none;
+
+  padding: 0;
+
+  margin: 0;
+}
+
+.details-list li {
+  font-size: 1.05rem;
+
+  color: #aaa;
+
+  margin-bottom: 15px;
+
+  line-height: 1.5;
+}
+
+.details-list strong {
+  color: #fff;
+}
+
+/* --- VISUELLE BOKSER / PRISKORT (HØYRESIDE) --- */
+
+.details-stats-box {
+  display: flex;
+
+  gap: 20px;
+
+  width: 100%;
+}
+
+.details-stats-box.horizontal {
+  flex-direction: column;
+}
+
+.stat-card {
+  flex: 1;
+
+  background: #111;
+
+  border: 1px solid #222;
+
+  border-radius: 16px;
+
+  padding: 30px 20px;
+
+  text-align: center;
+
+  position: relative;
+}
+
+.stat-card h3 {
+  font-family: "Orbitron", sans-serif;
+
+  margin: 0 0 10px 0;
+
+  font-size: 1.4rem;
+}
+
+.stat-price {
+  font-size: 2rem;
+
+  font-weight: 900;
+
+  color: #9d32a8;
+
+  margin: 0;
+}
+
+/* Spesialstyling for det "populære" kortet */
+
+.stat-card.popular {
+  border: 1px solid #9d32a8;
+
+  background: linear-gradient(180deg, #151117 0%, #111 100%);
+
+  box-shadow: 0 0 20px rgba(157, 50, 168, 0.15);
+}
+
+.stat-badge {
+  position: absolute;
+
+  top: -12px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  background: #9d32a8;
+
+  color: white;
+
+  padding: 3px 12px;
+
+  font-size: 0.75rem;
+
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  border-radius: 12px;
+}
+
+/* Event-kort */
+
+.package-info-card {
+  background: #111;
+
+  border: 1px solid #222;
+
+  border-radius: 20px;
+
+  padding: 40px;
+}
+
+.package-info-card h4 {
+  font-family: "Orbitron", sans-serif;
+
+  font-size: 1.6rem;
+
+  margin: 0 0 15px 0;
+
+  color: white;
+}
+
+.package-info-card p {
+  font-size: 1rem;
+
+  color: #888;
+
+  margin-bottom: 25px;
+}
+
+.pack-price {
+  font-family: "Orbitron", sans-serif;
+
+  font-size: 1.3rem;
+
+  font-weight: 900;
+
+  color: #9d32a8;
+}
+
+/* Bedriftsboks */
+
+.corporate-box {
+  width: 100%;
+
+  background: #141414;
+
+  border: 1px solid #252525;
+
+  padding: 40px;
+
+  border-radius: 20px;
+
+  text-align: center;
+}
+
+.corporate-box h3 {
+  font-family: "Orbitron", sans-serif;
+
+  margin: 0 0 15px 0;
+}
+
+.corporate-btn {
+  display: inline-block;
+
+  background: #9d32a8;
+
+  color: white;
+
+  text-decoration: none;
+
+  padding: 15px 30px;
+
+  border-radius: 10px;
+
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  margin-top: 20px;
+
+  transition: 0.3s;
+}
+
+.corporate-btn:hover {
+  background: #bd3cc9;
+
+  box-shadow: 0 0 15px rgba(157, 50, 168, 0.6);
+}
+
+/* --- MOBILRESPONSIVITET --- */
+
+@media (max-width: 768px) {
+  .details-grid,
+  .details-grid.reverse {
+    grid-template-columns: 1fr;
+
+    gap: 40px;
+  }
+
+  .details-page-section {
+    padding: 70px 0;
+  }
+}
+/* Fjerner den automatiske understrekingen på logo-lenken */
+a.logo {
+  text-decoration: none !important;
+}
+
+/* For sikkerhets skyld, hvis nettleseren prøver å understreke teksten inni */
+a.logo * {
+  text-decoration: none !important;
+}
