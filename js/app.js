@@ -97,3 +97,51 @@ document.querySelectorAll(".price-card").forEach((card) => {
   card.style.transition = "all 0.6s ease-out";
   observer.observe(card);
 });
+let startTime;
+let timerInterval;
+let isRunning = false;
+
+const gameBtn = document.getElementById("game-btn");
+const timerDisplay = document.getElementById("timer-display");
+const gameMessage = document.getElementById("game-message");
+
+gameBtn.addEventListener("click", () => {
+  if (!isRunning) {
+    // START SPILLET
+    isRunning = true;
+    gameBtn.textContent = "STOPP!";
+    gameBtn.style.background = "#ff0055"; // Endre farge til rød når man skal stoppe
+    gameMessage.textContent = "";
+
+    startTime = performance.now();
+
+    timerInterval = setInterval(() => {
+      const elapsed = (performance.now() - startTime) / 1000;
+      timerDisplay.textContent = elapsed.toFixed(2);
+    }, 10); // Oppdaterer hvert 10. millisekund for nøyaktighet
+  } else {
+    // STOPP SPILLET
+    isRunning = false;
+    clearInterval(timerInterval);
+    gameBtn.textContent = "PRØV IGJEN";
+    gameBtn.style.background = "#9d32a8"; // Tilbake til lilla
+
+    const finalTime = ((performance.now() - startTime) / 1000).toFixed(2);
+    timerDisplay.textContent = finalTime;
+
+    // SJEKK OM DE TRAFF NØYAKTIG 10.00
+    if (finalTime === "10.00") {
+      gameMessage.textContent =
+        "🎉 SYKT! Du klarte det! Ta screenshot og vis i kassa for gratis time!";
+      gameMessage.style.color = "#00ffcc"; // Grønn suksess-farge
+    } else {
+      const diff = (finalTime - 10.0).toFixed(2);
+      if (diff > 0) {
+        gameMessage.textContent = `Du var ${diff} sekunder for treg!`;
+      } else {
+        gameMessage.textContent = `Du var ${Math.abs(diff)} sekunder for rask!`;
+      }
+      gameMessage.style.color = "#ff3333";
+    }
+  }
+});

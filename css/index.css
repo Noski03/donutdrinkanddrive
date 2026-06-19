@@ -905,3 +905,118 @@ a.logo {
 a.logo * {
   text-decoration: none !important;
 }
+/* ==========================================================================
+   LIVE STREAM & 10-SEKUNDERS SPILL STYLING
+   ========================================================================== */
+
+/* Felles avstand for de nye seksjonene */
+.live-stream-section,
+.game-section {
+  padding: 80px 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* --- LIVE STREAM --- */
+.live-stream-section h2,
+.game-section h3 {
+  font-family: "Orbitron", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+.video-wrapper {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9; /* Sørger for perfekt 16:9 format på alle skjermer */
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(157, 50, 168, 0.4);
+  box-shadow: 0 0 30px rgba(157, 50, 168, 0.25);
+  background-color: #000;
+}
+
+.video-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- 10-SEKUNDERS SPILL --- */
+.game-box {
+  background: #151515; /* Samme mørke bakgrunn som pakkekortene dine */
+  border: 1px solid #333;
+  border-radius: 24px;
+  padding: 50px 40px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease;
+}
+
+/* Hvis man vinner får hele boksen en syk grønn glød */
+.game-box.winner {
+  border-color: #00ffcc !important;
+  box-shadow: 0 0 40px rgba(0, 255, 204, 0.2) !important;
+}
+
+.game-box p {
+  color: #aaa;
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+}
+
+/* Den store fete timeren */
+#timer-display {
+  font-family: "Orbitron", sans-serif;
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: white;
+  margin: 20px 0 35px 0;
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  font-variant-numeric: tabular-nums; /* Hindrer at tallene "hopper" når de teller */
+}
+
+/* Spill-knappen */
+#game-btn {
+  background: #9d32a8;
+  color: white;
+  border: none;
+  padding: 20px 50px;
+  border-radius: 12px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(157, 50, 168, 0.4);
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 300px;
+}
+
+#game-btn:hover {
+  background: #bc3fd0;
+  transform: scale(1.03);
+  box-shadow: 0 0 30px rgba(157, 50, 168, 0.6);
+}
+
+#game-btn:active {
+  transform: scale(0.98);
+}
+
+/* Resultatmeldingen */
+#game-message {
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-top: 30px;
+  min-height: 30px; /* Holder plassen så boksen ikke hopper */
+  line-height: 1.5;
+}
