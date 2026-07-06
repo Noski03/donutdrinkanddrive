@@ -1020,3 +1020,92 @@ a.logo * {
   min-height: 30px; /* Holder plassen så boksen ikke hopper */
   line-height: 1.5;
 }
+/* ==========================================================================
+   OM OSS SEKSJON STYLING
+   ========================================================================== */
+
+.about-section {
+  padding: 100px 0;
+  width: 100%;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+}
+
+.about-text h2 {
+  font-family: "Orbitron", sans-serif;
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin: 10px 0 25px 0;
+}
+
+.about-text p {
+  color: #ccc;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+/* Høyre side: Statistikk-kort */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.about-stat-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.about-stat-card h3 {
+  font-family: "Orbitron", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 5px;
+}
+
+.about-stat-card p {
+  color: #888;
+  font-size: 0.95rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* Det "populære/uthevede" kortet tar hele bredden i bunnen av sin grid */
+.about-stat-card.highlight {
+  grid-column: span 2;
+  border-color: #9d32a8;
+  background: linear-gradient(180deg, #151117 0%, #111 100%);
+  box-shadow: 0 0 25px rgba(157, 50, 168, 0.15);
+}
+
+.about-stat-card.highlight h3 {
+  color: #9d32a8;
+  text-shadow: 0 0 15px rgba(157, 50, 168, 0.4);
+}
+
+/* Mobilresponsivitet */
+@media (max-width: 768px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .about-text {
+    text-align: center;
+  }
+}
