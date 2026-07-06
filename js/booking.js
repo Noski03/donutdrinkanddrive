@@ -5,7 +5,7 @@
 
 // Bytt til URL-en for booking-arket ditt i SheetBest.
 const BOOKING_SHEETBEST_URL =
-  "https://api.sheetbest.com/sheets/78eb891c-7f42-4ed9-8290-759dc526528a";
+  "https://api.sheetbest.com/sheets/17766096-0f6c-4f4a-b242-ac824a3d6585";
 
 const MIN_BIRTHDAY_GROUP = 10;
 
