@@ -97,51 +97,350 @@ document.querySelectorAll(".price-card").forEach((card) => {
   card.style.transition = "all 0.6s ease-out";
   observer.observe(card);
 });
+
+const SHEETBEST_URL =
+  "https://api.sheetbest.com/sheets/78eb891c-7f42-4ed9-8290-759dc526528a";
+const MAX_DAILY_ATTEMPTS = 5;
+const ATTEMPT_WINDOW_MS = 24 * 60 * 60 * 1000;
+const GAME_ATTEMPT_TYPE = "10-second-attempt";
+const GAME_WIN_CLAIM_TYPE = "10-second-win-claim";
+
 let startTime;
 let timerInterval;
 let isRunning = false;
+let pendingWinSubmission = false;
+let pendingResultTime = "";
+let latestGameState = null;
 
 const gameBtn = document.getElementById("game-btn");
 const timerDisplay = document.getElementById("timer-display");
 const gameMessage = document.getElementById("game-message");
+const attemptCounter = document.getElementById("attempt-counter");
+const winFormSection = document.getElementById("win-form-section");
+const winForm = document.getElementById("win-form");
+const winSubmitBtn = document.getElementById("win-submit");
+const winStatus = document.getElementById("win-status");
+const winResultTime = document.getElementById("win-result-time");
+const winAttemptsUsed = document.getElementById("win-attempts-used");
 
-gameBtn.addEventListener("click", () => {
-  if (!isRunning) {
-    // START SPILLET
-    isRunning = true;
-    gameBtn.textContent = "STOPP!";
-    gameBtn.style.background = "#ff0055"; // Endre farge til rød når man skal stoppe
-    gameMessage.textContent = "";
+function parseSheetTimestamp(entry) {
+  const rawTimestamp =
+    entry.submitted_at ||
+    entry.created_at ||
+    entry.attempted_at ||
+    entry.timestamp ||
+    entry.date_time ||
+    entry.date ||
+    "";
+  const parsedTimestamp = Date.parse(rawTimestamp);
 
-    startTime = performance.now();
+  return Number.isNaN(parsedTimestamp) ? 0 : parsedTimestamp;
+}
 
-    timerInterval = setInterval(() => {
-      const elapsed = (performance.now() - startTime) / 1000;
-      timerDisplay.textContent = elapsed.toFixed(2);
-    }, 10); // Oppdaterer hvert 10. millisekund for nøyaktighet
-  } else {
-    // STOPP SPILLET
-    isRunning = false;
-    clearInterval(timerInterval);
-    gameBtn.textContent = "PRØV IGJEN";
-    gameBtn.style.background = "#9d32a8"; // Tilbake til lilla
+function formatRemainingTime(milliseconds) {
+  const totalMinutes = Math.max(0, Math.ceil(milliseconds / 60000));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
 
-    const finalTime = ((performance.now() - startTime) / 1000).toFixed(2);
-    timerDisplay.textContent = finalTime;
+  if (hours > 0) {
+    return `${hours} t ${minutes} min`;
+  }
 
-    // SJEKK OM DE TRAFF NØYAKTIG 10.00
-    if (finalTime === "10.00") {
-      gameMessage.textContent =
-        "🎉 SYKT! Du klarte det! Ta screenshot og vis i kassa for gratis time!";
-      gameMessage.style.color = "#00ffcc"; // Grønn suksess-farge
-    } else {
-      const diff = (finalTime - 10.0).toFixed(2);
-      if (diff > 0) {
-        gameMessage.textContent = `Du var ${diff} sekunder for treg!`;
-      } else {
-        gameMessage.textContent = `Du var ${Math.abs(diff)} sekunder for rask!`;
-      }
+  return `${minutes} min`;
+}
+
+async function fetchSheetEntries() {
+  const response = await fetch(SHEETBEST_URL);
+
+  if (!response.ok) {
+    throw new Error("Kunne ikke hente data fra SheetBest");
+  }
+
+  const entries = await response.json();
+  return Array.isArray(entries) ? entries : [];
+}
+
+function getRecentGameAttempts(entries, now = Date.now()) {
+  return entries.filter((entry) => {
+    if (entry.type !== GAME_ATTEMPT_TYPE) {
+      return false;
+    }
+
+    const timestamp = parseSheetTimestamp(entry);
+    return timestamp > 0 && now - timestamp < ATTEMPT_WINDOW_MS;
+  });
+}
+
+function getLockoutMessage(attempts, now = Date.now()) {
+  if (attempts.length < MAX_DAILY_ATTEMPTS) {
+    return "";
+  }
+
+  const oldestAttempt = Math.min(
+    ...attempts.map((attempt) => parseSheetTimestamp(attempt)),
+  );
+  const unlockIn = oldestAttempt + ATTEMPT_WINDOW_MS - now;
+
+  return `Du har brukt opp dagens 5 forsøk. Prøv igjen om ${formatRemainingTime(unlockIn)}.`;
+}
+
+function applyGameState(gameState, options = {}) {
+  const now = Date.now();
+  const attemptsLeft = Math.max(
+    0,
+    MAX_DAILY_ATTEMPTS - gameState.attempts.length,
+  );
+  const lockoutMessage = getLockoutMessage(gameState.attempts, now);
+
+  if (attemptCounter) {
+    attemptCounter.textContent = `${gameState.attempts.length}/${MAX_DAILY_ATTEMPTS} forsøk brukt i dag. ${attemptsLeft} igjen.`;
+  }
+
+  latestGameState = gameState;
+
+  if (pendingWinSubmission) {
+    gameBtn.disabled = true;
+    gameBtn.textContent = "Fyll ut skjemaet";
+    return;
+  }
+
+  if (gameState.attempts.length >= MAX_DAILY_ATTEMPTS) {
+    gameBtn.disabled = true;
+    gameBtn.textContent = "PRØV OM IGJEN SENERE";
+
+    if (!isRunning && gameMessage) {
+      gameMessage.textContent = lockoutMessage;
       gameMessage.style.color = "#ff3333";
     }
+
+    return;
   }
-});
+
+  gameBtn.disabled = false;
+
+  if (!isRunning && !options.keepLabel) {
+    gameBtn.textContent = "START";
+  }
+}
+
+async function refreshGameState(options = {}) {
+  try {
+    const entries = await fetchSheetEntries();
+    const attempts = getRecentGameAttempts(entries);
+    const gameState = { entries, attempts };
+    applyGameState(gameState, options);
+    return gameState;
+  } catch (error) {
+    console.error("Kunne ikke oppdatere spillstatus:", error);
+
+    if (attemptCounter) {
+      attemptCounter.textContent =
+        "Klarte ikke å hente dagens forsøk akkurat nå.";
+    }
+
+    return latestGameState || { entries: [], attempts: [] };
+  }
+}
+
+async function logGameEntry(payload) {
+  const response = await fetch(SHEETBEST_URL, {
+    method: "POST",
+    mode: "cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...payload,
+      submitted_at: new Date().toISOString(),
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Kunne ikke lagre spillhendelsen");
+  }
+}
+
+function showWinForm(finalTime, attemptsUsed) {
+  pendingWinSubmission = true;
+  pendingResultTime = finalTime;
+
+  if (winResultTime) {
+    winResultTime.value = finalTime;
+  }
+
+  if (winAttemptsUsed) {
+    winAttemptsUsed.value = String(attemptsUsed);
+  }
+
+  if (winStatus) {
+    winStatus.textContent =
+      "Du traff 10.00. Fyll ut skjemaet under for å registrere gevinsten i SheetBest.";
+    winStatus.style.color = "#00ffcc";
+  }
+
+  if (winFormSection) {
+    winFormSection.classList.remove("hidden");
+    winFormSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  if (winSubmitBtn) {
+    winSubmitBtn.disabled = false;
+    winSubmitBtn.textContent = "REGISTRER GEVINST";
+  }
+
+  gameBtn.disabled = true;
+  gameBtn.textContent = "Fyll ut skjemaet";
+}
+
+function resetWinFormState() {
+  pendingWinSubmission = false;
+  pendingResultTime = "";
+
+  if (winForm) {
+    winForm.reset();
+  }
+
+  if (winFormSection) {
+    winFormSection.classList.add("hidden");
+  }
+
+  if (winStatus) {
+    winStatus.textContent = "";
+  }
+}
+
+if (gameBtn && timerDisplay && gameMessage) {
+  refreshGameState();
+
+  gameBtn.addEventListener("click", async () => {
+    if (pendingWinSubmission) {
+      gameMessage.textContent =
+        "Registrer gevinsten i skjemaet før du prøver igjen.";
+      gameMessage.style.color = "#ff3333";
+      return;
+    }
+
+    const currentState = await refreshGameState({ keepLabel: isRunning });
+
+    if (currentState.attempts.length >= MAX_DAILY_ATTEMPTS && !isRunning) {
+      return;
+    }
+
+    if (!isRunning) {
+      isRunning = true;
+      gameBtn.textContent = "STOPP!";
+      gameBtn.style.background = "#ff0055";
+      gameMessage.textContent = "";
+
+      startTime = performance.now();
+
+      timerInterval = setInterval(() => {
+        const elapsed = (performance.now() - startTime) / 1000;
+        timerDisplay.textContent = elapsed.toFixed(2);
+      }, 10);
+    } else {
+      isRunning = false;
+      clearInterval(timerInterval);
+      gameBtn.textContent = "PRØV IGJEN";
+      gameBtn.style.background = "#9d32a8";
+
+      const finalTime = ((performance.now() - startTime) / 1000).toFixed(2);
+      timerDisplay.textContent = finalTime;
+
+      const attemptStatus = finalTime === "10.00" ? "win" : "fail";
+
+      try {
+        await logGameEntry({
+          type: GAME_ATTEMPT_TYPE,
+          attempt_status: attemptStatus,
+          result_time: finalTime,
+          attempts_used_today: currentState.attempts.length + 1,
+        });
+      } catch (error) {
+        console.error("Kunne ikke lagre forsøket:", error);
+        gameMessage.textContent =
+          "Kunne ikke lagre forsøket akkurat nå. Prøv igjen når forbindelsen er tilbake.";
+        gameMessage.style.color = "#ff3333";
+        gameBtn.textContent = "START";
+        gameBtn.style.background = "#9d32a8";
+        await refreshGameState();
+        return;
+      }
+
+      const updatedState = await refreshGameState({ keepLabel: true });
+
+      if (finalTime === "10.00") {
+        gameMessage.textContent =
+          "🎉 Trefferen er registrert. Fyll ut skjemaet under for å sende gevinsten videre.";
+        gameMessage.style.color = "#00ffcc";
+        showWinForm(finalTime, updatedState.attempts.length);
+      } else {
+        const diff = (finalTime - 10.0).toFixed(2);
+        gameMessage.textContent =
+          diff > 0
+            ? `Du var ${diff} sekunder for treg. ${Math.max(0, MAX_DAILY_ATTEMPTS - updatedState.attempts.length)} forsøk igjen i dag.`
+            : `Du var ${Math.abs(diff)} sekunder for rask. ${Math.max(0, MAX_DAILY_ATTEMPTS - updatedState.attempts.length)} forsøk igjen i dag.`;
+        gameMessage.style.color = "#ff3333";
+      }
+
+      applyGameState(updatedState, { keepLabel: true });
+    }
+  });
+}
+
+if (winForm) {
+  winForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!pendingWinSubmission) {
+      return;
+    }
+
+    const originalButtonText = winSubmitBtn ? winSubmitBtn.textContent : "";
+
+    if (winSubmitBtn) {
+      winSubmitBtn.disabled = true;
+      winSubmitBtn.textContent = "REGISTRERER...";
+    }
+
+    if (winStatus) {
+      winStatus.textContent =
+        "Sender gevinsten til SheetBest og knytter den til bookingen din...";
+      winStatus.style.color = "#bbb";
+    }
+
+    const formData = new FormData(winForm);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      await logGameEntry({
+        type: GAME_WIN_CLAIM_TYPE,
+        claim_status: "submitted",
+        result_time: pendingResultTime,
+        ...data,
+      });
+
+      if (winStatus) {
+        winStatus.textContent =
+          "Gevinsten er registrert. En ansatt kan nå se den i SheetBest sammen med bookingene.";
+        winStatus.style.color = "#00ffcc";
+      }
+
+      resetWinFormState();
+      gameMessage.textContent = "Gevinsten er sendt til bookinglisten.";
+      gameMessage.style.color = "#00ffcc";
+    } catch (error) {
+      console.error("Kunne ikke lagre gevinst:", error);
+      if (winStatus) {
+        winStatus.textContent =
+          "Vi fikk ikke sendt skjemaet. Sjekk nett og prøv igjen, eller be en ansatt registrere gevinsten manuelt.";
+        winStatus.style.color = "#ff3333";
+      }
+    } finally {
+      if (winSubmitBtn) {
+        winSubmitBtn.disabled = false;
+        winSubmitBtn.textContent = originalButtonText || "REGISTRER GEVINST";
+      }
+
+      await refreshGameState({ keepLabel: true });
+    }
+  });
+}

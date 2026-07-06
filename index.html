@@ -182,11 +182,79 @@
     <section class="game-section container">
       <div class="game-box">
         <h3>KLARER DU <span class="purple-glow">10.00</span> SEKUNDER?</h3>
-        <p>Treff nøyaktig for å vinne en gratis kjøretime!</p>
+        <p>
+          Du har 5 forsøk per 24 timer. Treff 10.00, så må gevinsten registreres
+          i skjemaet under før den blir sendt videre.
+        </p>
 
         <div id="timer-display">0.00</div>
         <button id="game-btn">START</button>
+        <p id="attempt-counter" class="attempt-counter"></p>
         <p id="game-message"></p>
+      </div>
+    </section>
+
+    <section id="win-form-section" class="win-form-section hidden">
+      <div class="container">
+        <div class="win-form-panel">
+          <span class="section-tag">Premie registrering</span>
+          <h2>Registrer gevinsten før du går videre</h2>
+          <p>
+            Denne gevinsten lagres sammen med bookingene i SheetBest, så en
+            ansatt kan behandle den manuelt eller koble den til en booking.
+          </p>
+
+          <form id="win-form" class="win-form">
+            <input type="hidden" name="type" value="10-second-win" />
+            <input type="hidden" name="package" value="10-sekunders-premie" />
+            <input type="hidden" name="result_time" id="win-result-time" />
+            <input
+              type="hidden"
+              name="attempts_used_today"
+              id="win-attempts-used"
+            />
+
+            <div class="form-row">
+              <input type="text" name="from_name" placeholder="Navn" required />
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Telefonnummer"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <input
+                type="email"
+                name="reply_to"
+                placeholder="E-post"
+                required
+              />
+              <input type="date" name="preferred_date" required />
+            </div>
+
+            <div class="form-row">
+              <select name="preferred_time" required>
+                <option value="">Velg ønsket tid</option>
+                <option value="14:00">14:00</option>
+                <option value="16:00">16:00</option>
+                <option value="18:00">18:00</option>
+              </select>
+              <input
+                type="text"
+                name="notes"
+                placeholder="Evt. kommentar til booking"
+              />
+            </div>
+
+            <button type="submit" class="btn-confirm" id="win-submit">
+              SEND INN GEVINST
+            </button>
+
+            <p id="win-status" class="win-status" aria-live="polite"></p>
+          </form>
+        </div>
       </div>
     </section>
     <section id="dropin-info" class="details-page-section">
