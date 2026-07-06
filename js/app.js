@@ -105,6 +105,9 @@ const MAX_DAILY_ATTEMPTS = 5;
 const ATTEMPT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const GAME_ATTEMPT_TYPE = "10-second-attempt";
 const GAME_WIN_CLAIM_TYPE = "10-second-win-claim";
+const GAME_QUERY_PARAMS = new URLSearchParams(window.location.search);
+const GAME_TEST_MODE = GAME_QUERY_PARAMS.has("testwin");
+const GAME_GIFT_CARD_MODE = GAME_QUERY_PARAMS.has("giftcard");
 
 let startTime;
 let timerInterval;
@@ -312,8 +315,33 @@ function resetWinFormState() {
   }
 }
 
+function openTestWinForm() {
+  if (!winFormSection) {
+    return;
+  }
+
+  showWinForm("TEST", 0);
+
+  if (winStatus) {
+    winStatus.textContent =
+      "Testmodus er aktiv. Du kan fylle ut skjemaet og sende en test uten å vinne først.";
+    winStatus.style.color = "#00ffcc";
+  }
+
+  if (gameMessage) {
+    gameMessage.textContent = GAME_GIFT_CARD_MODE
+      ? "Gavekort-lenken er aktiv. Skjemaet er åpent for registrering."
+      : "Testmodus er aktivert. Skjemaet er åpent for testing.";
+    gameMessage.style.color = "#00ffcc";
+  }
+}
+
 if (gameBtn && timerDisplay && gameMessage) {
   refreshGameState();
+
+  if (GAME_TEST_MODE || GAME_GIFT_CARD_MODE) {
+    openTestWinForm();
+  }
 
   gameBtn.addEventListener("click", async () => {
     if (pendingWinSubmission) {
