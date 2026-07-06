@@ -101,6 +101,9 @@ document.querySelectorAll(".price-card").forEach((card) => {
 // Bytt til URL-en for game-arket ditt i SheetBest.
 const GAME_SHEETBEST_URL =
   "https://api.sheetbest.com/sheets/78eb891c-7f42-4ed9-8290-759dc526528a";
+// Bytt til URL-en for gavekort-arket ditt i SheetBest.
+const GIFT_CARD_SHEETBEST_URL =
+  "https://api.sheetbest.com/sheets/17766096-0f6c-4f4a-b242-ac824a3d6585";
 const MAX_DAILY_ATTEMPTS = 5;
 const ATTEMPT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const GAME_ATTEMPT_TYPE = "10-second-attempt";
@@ -248,7 +251,10 @@ async function refreshGameState(options = {}) {
 }
 
 async function logGameEntry(payload) {
-  const response = await fetch(GAME_SHEETBEST_URL, {
+  const isClaimEntry = payload.record_type === "win_claim";
+  const targetUrl = isClaimEntry ? GIFT_CARD_SHEETBEST_URL : GAME_SHEETBEST_URL;
+
+  const response = await fetch(targetUrl, {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "application/json" },
@@ -448,10 +454,10 @@ if (winForm) {
 
     try {
       await logGameEntry({
-        type: GAME_WIN_CLAIM_TYPE,
+        type: GAME_GIFT_CARD_MODE ? "giftcard" : GAME_WIN_CLAIM_TYPE,
         record_type: "win_claim",
-        claim_status: "submitted",
-        use_status: "unused",
+        claim_status: GAME_GIFT_CARD_MODE ? "giftcard_submitted" : "submitted",
+        use_status: GAME_GIFT_CARD_MODE ? "giftcard_unused" : "unused",
         win_code: pendingWinCode,
         result_time: pendingResultTime,
         ...data,
