@@ -3,11 +3,42 @@
   emailjs.init("5SuUIn7ldp9MurDAm");
 })();
 
-// HER LIMER DU INN DEN NYE LENKEN FRA SJEFEN DIN:
-const SHEETBEST_URL =
+// Bytt til URL-en for booking-arket ditt i SheetBest.
+const BOOKING_SHEETBEST_URL =
   "https://api.sheetbest.com/sheets/78eb891c-7f42-4ed9-8290-759dc526528a";
 
-const MAX_SETS = 5;
+const MIN_BIRTHDAY_GROUP = 10;
+
+const BOOKING_PACKAGES = {
+  "Bursdag 10-12": {
+    label: "Bursdag 10-12",
+    hours: 2,
+    startTime: "10:00",
+    endTime: "12:00",
+    pricePerPerson: 200,
+  },
+  "Bursdag 12-14": {
+    label: "Bursdag 12-14",
+    hours: 2,
+    startTime: "12:00",
+    endTime: "14:00",
+    pricePerPerson: 200,
+  },
+  "Kveld 20-22": {
+    label: "Kveld 20-22",
+    hours: 2,
+    startTime: "20:00",
+    endTime: "22:00",
+    pricePerPerson: 200,
+  },
+  "Kveld 20-23": {
+    label: "Kveld 20-23",
+    hours: 3,
+    startTime: "20:00",
+    endTime: "23:00",
+    pricePerPerson: 300,
+  },
+};
 
 function selectPackage(packageName) {
   const display = document.getElementById("selected-package-display");
@@ -20,6 +51,26 @@ function selectPackage(packageName) {
     section.classList.remove("disabled");
     section.scrollIntoView({ behavior: "smooth" });
   }
+}
+
+function getSelectedBookingPackage(packageName) {
+  return BOOKING_PACKAGES[packageName] || null;
+}
+
+function buildBookingSummary(data, bookingPackage, seats) {
+  const totalAmount = bookingPackage.pricePerPerson * seats;
+
+  return {
+    ...data,
+    booking_type: "birthday_private_booking",
+    booking_window: bookingPackage.label,
+    start_time: bookingPackage.startTime,
+    end_time: bookingPackage.endTime,
+    hours: bookingPackage.hours,
+    price_per_person: bookingPackage.pricePerPerson,
+    min_people: MIN_BIRTHDAY_GROUP,
+    total_amount: totalAmount,
+  };
 }
 
 document
@@ -35,66 +86,58 @@ document
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
+    const bookingPackage = getSelectedBookingPackage(data.package);
+    const requestedSeats = parseInt(data.seats, 10);
+
+    if (!bookingPackage) {
+      alert("Velg et bursdagsopplegg først.");
+      btn.innerText = originalText;
+      btn.disabled = false;
+      return;
+    }
+
+    if (Number.isNaN(requestedSeats) || requestedSeats < MIN_BIRTHDAY_GROUP) {
+      alert(`Bursdagsbooking krever minst ${MIN_BIRTHDAY_GROUP} personer.`);
+      btn.innerText = originalText;
+      btn.disabled = false;
+      return;
+    }
 
     try {
-      // 1. Hent bookinger for å sjekke kapasitet via sjefens nye kobling
-      const response = await fetch(SHEETBEST_URL);
-      if (!response.ok) throw new Error("Kunne ikke koble til SheetBest");
-
-      const bookings = await response.json();
-
-      const occupied = bookings
-        .filter((b) => b.date === data.date && b.time === data.time)
-        .reduce((sum, b) => sum + parseInt(b.seats || 0), 0);
-
-      const requested = parseInt(data.seats);
-
-      if (occupied + requested > MAX_SETS) {
-        alert(
-          `Beklager! Det er kun ${MAX_SETS - occupied} ledige plasser kl. ${data.time}.`,
-        );
-        btn.innerText = originalText;
-        btn.disabled = false;
-        return;
-      }
-
-      // 2. Regn ut pris og 12% MVA
-      const priser = {
-        "The Rookie": 199,
-        "Pro Racer": 349,
-        "Grand Prix": 599,
-      };
-
-      const prisPerEnhet = priser[data.package] || 0;
-      const totalt = prisPerEnhet * requested;
+      // 1. Regn ut pris for bursdagspakken
+      const totalt = bookingPackage.pricePerPerson * requestedSeats;
       const netto = Math.round(totalt / 1.12);
       const mva = totalt - netto;
 
       const emailParams = {
-        ...data,
-        price_per_unit: prisPerEnhet,
+        ...buildBookingSummary(data, bookingPackage, requestedSeats),
+        price_per_unit: bookingPackage.pricePerPerson,
         net_amount: netto,
         mva_amount: mva,
         total_amount: totalt,
       };
 
-      // 3. Lagre i Google Sheets på sjefens konto
-      await fetch(SHEETBEST_URL, {
+      // 2. Lagre i SheetBest-arket for booking
+      await fetch(BOOKING_SHEETBEST_URL, {
         method: "POST",
         mode: "cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(
+          buildBookingSummary(data, bookingPackage, requestedSeats),
+        ),
       });
 
-      // 4. Send e-post via EmailJS
+      // 3. Send e-post via EmailJS
       await emailjs.send("service_8erarue", "template_baqv2nx", emailParams);
 
       alert(
         "Takk, " +
           data.from_name +
-          "! Forespørsel er sendt.\n\n" +
-          "Vi har registrert tlf: " +
-          data.phone +
+          "! Bursdagsbookingen er sendt.\n\n" +
+          "Vi har registrert " +
+          requestedSeats +
+          " personer for " +
+          bookingPackage.label +
           ".\n\n" +
           "VIKTIG: Sjekk søppelpost-mappen din hvis du ikke ser bekreftelsen i innboksen!",
       );
@@ -106,7 +149,7 @@ document
     } catch (error) {
       console.error("Systemfeil:", error);
       alert(
-        "Det skjedde en feil. Vennligst sjekk alle felt eller prøv igjen senere.",
+        "Det skjedde en feil. Sjekk at du har valgt et bursdagsopplegg med minst 10 personer, eller prøv igjen senere.",
       );
     } finally {
       btn.innerText = originalText;

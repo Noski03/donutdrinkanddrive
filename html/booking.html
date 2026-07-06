@@ -39,25 +39,28 @@
 
     <main class="container">
       <section class="booking-hero">
-        <h1>BOOK DIN <span class="glow-text">SESSION</span></h1>
-        <p>Velg den pakken som passer ditt ambisjonsnivå.</p>
+        <h1>BOOK DIN <span class="glow-text">BURSDAG</span></h1>
+        <p>
+          Bursdagsopplegg kan bookes for minst 10 personer. Drop-in er åpent fra
+          14:00 til 20:00 og kan ikke forhåndsbookes.
+        </p>
       </section>
 
       <div class="packages-grid">
         <div class="booking-card">
           <div class="card-header">
-            <h3>The Rookie</h3>
-            <div class="price">199,-</div>
+            <h3>Bursdag 10-12</h3>
+            <div class="price">200,- / pers</div>
           </div>
           <ul class="features">
-            <li>1 x 15 min kjøring</li>
-            <li>Gjennomgang av bane</li>
-            <li>Digitalt resultat</li>
+            <li>Minst 10 personer</li>
+            <li>2 timer privat booking</li>
+            <li>10:00 - 12:00</li>
           </ul>
           <button
             type="button"
             class="btn-select"
-            onclick="selectPackage('The Rookie')"
+            onclick="selectPackage('Bursdag 10-12')"
           >
             Velg denne
           </button>
@@ -66,19 +69,18 @@
         <div class="booking-card featured">
           <div class="badge">Anbefalt</div>
           <div class="card-header">
-            <h3>Pro Racer</h3>
-            <div class="price">349,-</div>
+            <h3>Bursdag 12-14</h3>
+            <div class="price">200,- / pers</div>
           </div>
           <ul class="features">
-            <li>2 x 15 min kjøring</li>
-            <li>Telemetri-analyse</li>
-            <li>Prioritert kø</li>
-            <li>1 valgfri drikke</li>
+            <li>Minst 10 personer</li>
+            <li>2 timer privat booking</li>
+            <li>12:00 - 14:00</li>
           </ul>
           <button
             type="button"
             class="btn-select"
-            onclick="selectPackage('Pro Racer')"
+            onclick="selectPackage('Bursdag 12-14')"
           >
             Velg denne
           </button>
@@ -86,19 +88,37 @@
 
         <div class="booking-card">
           <div class="card-header">
-            <h3>Grand Prix</h3>
-            <div class="price">599,-</div>
+            <h3>Kveld 20-22</h3>
+            <div class="price">200,- / pers</div>
           </div>
           <ul class="features">
-            <li>3 x 20 min kjøring</li>
-            <li>Full race-simulator</li>
-            <li>Medalje-seremoni</li>
-            <li>Pizza & Drikke inkl.</li>
+            <li>Minst 10 personer</li>
+            <li>2 timer privat booking</li>
+            <li>20:00 - 22:00</li>
           </ul>
           <button
             type="button"
             class="btn-select"
-            onclick="selectPackage('Grand Prix')"
+            onclick="selectPackage('Kveld 20-22')"
+          >
+            Velg denne
+          </button>
+        </div>
+
+        <div class="booking-card">
+          <div class="card-header">
+            <h3>Kveld 20-23</h3>
+            <div class="price">300,- / pers</div>
+          </div>
+          <ul class="features">
+            <li>Minst 10 personer</li>
+            <li>3 timer privat booking</li>
+            <li>20:00 - 23:00</li>
+          </ul>
+          <button
+            type="button"
+            class="btn-select"
+            onclick="selectPackage('Kveld 20-23')"
           >
             Velg denne
           </button>
@@ -126,10 +146,13 @@
 
             <div class="form-row">
               <select name="seats" id="seat-picker" required>
-                <option value="1">1 Person</option>
-                <option value="2">2 Personer</option>
-                <option value="3">3 Personer</option>
-                <option value="4">4 Personer (Full gruppe)</option>
+                <option value="">Antall personer</option>
+                <option value="10">10 Personer</option>
+                <option value="12">12 Personer</option>
+                <option value="15">15 Personer</option>
+                <option value="20">20 Personer</option>
+                <option value="25">25 Personer</option>
+                <option value="30">30 Personer</option>
               </select>
               <input
                 type="email"
@@ -141,12 +164,7 @@
 
             <div class="form-row">
               <input type="date" name="date" required id="date-picker" />
-              <select name="time" required>
-                <option value="">Velg tid</option>
-                <option value="14:00">14:00</option>
-                <option value="16:00">16:00</option>
-                <option value="18:00">18:00</option>
-              </select>
+              <input type="text" value="Tid følger valgt opplegg" disabled />
             </div>
 
             <button type="submit" class="btn-confirm" id="submit-btn">

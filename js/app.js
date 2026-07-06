@@ -98,7 +98,8 @@ document.querySelectorAll(".price-card").forEach((card) => {
   observer.observe(card);
 });
 
-const SHEETBEST_URL =
+// Bytt til URL-en for game-arket ditt i SheetBest.
+const GAME_SHEETBEST_URL =
   "https://api.sheetbest.com/sheets/78eb891c-7f42-4ed9-8290-759dc526528a";
 const MAX_DAILY_ATTEMPTS = 5;
 const ATTEMPT_WINDOW_MS = 24 * 60 * 60 * 1000;
@@ -110,6 +111,7 @@ let timerInterval;
 let isRunning = false;
 let pendingWinSubmission = false;
 let pendingResultTime = "";
+let pendingWinCode = "";
 let latestGameState = null;
 
 const gameBtn = document.getElementById("game-btn");
@@ -150,7 +152,7 @@ function formatRemainingTime(milliseconds) {
 }
 
 async function fetchSheetEntries() {
-  const response = await fetch(SHEETBEST_URL);
+  const response = await fetch(GAME_SHEETBEST_URL);
 
   if (!response.ok) {
     throw new Error("Kunne ikke hente data fra SheetBest");
@@ -243,12 +245,13 @@ async function refreshGameState(options = {}) {
 }
 
 async function logGameEntry(payload) {
-  const response = await fetch(SHEETBEST_URL, {
+  const response = await fetch(GAME_SHEETBEST_URL, {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ...payload,
+      sheet_type: payload.record_type || payload.type,
       submitted_at: new Date().toISOString(),
     }),
   });
@@ -261,6 +264,7 @@ async function logGameEntry(payload) {
 function showWinForm(finalTime, attemptsUsed) {
   pendingWinSubmission = true;
   pendingResultTime = finalTime;
+  pendingWinCode = `DDD-${Date.now()}`;
 
   if (winResultTime) {
     winResultTime.value = finalTime;
@@ -293,6 +297,7 @@ function showWinForm(finalTime, attemptsUsed) {
 function resetWinFormState() {
   pendingWinSubmission = false;
   pendingResultTime = "";
+  pendingWinCode = "";
 
   if (winForm) {
     winForm.reset();
@@ -350,9 +355,12 @@ if (gameBtn && timerDisplay && gameMessage) {
       try {
         await logGameEntry({
           type: GAME_ATTEMPT_TYPE,
+          record_type: "game_attempt",
           attempt_status: attemptStatus,
           result_time: finalTime,
           attempts_used_today: currentState.attempts.length + 1,
+          use_status: attemptStatus === "win" ? "needs_claim" : "attempted",
+          win_code: attemptStatus === "win" ? pendingWinCode : "",
         });
       } catch (error) {
         console.error("Kunne ikke lagre forsøket:", error);
@@ -413,7 +421,10 @@ if (winForm) {
     try {
       await logGameEntry({
         type: GAME_WIN_CLAIM_TYPE,
+        record_type: "win_claim",
         claim_status: "submitted",
+        use_status: "unused",
+        win_code: pendingWinCode,
         result_time: pendingResultTime,
         ...data,
       });
