@@ -100,7 +100,7 @@ document.querySelectorAll(".price-card").forEach((card) => {
 
 // Ett felles SheetBest-ark for booking, spillforsøk og vinnere.
 const SHARED_SHEETBEST_URL =
-  "https://api.sheetbest.com/sheets/17766096-0f6c-4f4a-b242-ac824a3d6585";
+  "https://api.sheetbest.com/sheets/1ada23a8-0ea2-40af-b3f8-5ee2ba5b0e0b";
 const MAX_DAILY_ATTEMPTS = 5;
 const ATTEMPT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const GAME_ATTEMPT_TYPE = "10-second-attempt";

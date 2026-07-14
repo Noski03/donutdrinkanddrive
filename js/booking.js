@@ -5,7 +5,7 @@
 
 // Ett felles SheetBest-ark for booking og spillvinnere.
 const SHARED_SHEETBEST_URL =
-  "https://api.sheetbest.com/sheets/17766096-0f6c-4f4a-b242-ac824a3d6585";
+  "https://api.sheetbest.com/sheets/1ada23a8-0ea2-40af-b3f8-5ee2ba5b0e0b";
 
 const MIN_BIRTHDAY_GROUP = 10;
 const MIN_BOOKING_NOTICE_MS = 48 * 60 * 60 * 1000;
