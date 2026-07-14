@@ -98,11 +98,8 @@ document.querySelectorAll(".price-card").forEach((card) => {
   observer.observe(card);
 });
 
-// Bytt til URL-en for game-arket ditt i SheetBest.
-const GAME_SHEETBEST_URL =
-  "https://api.sheetbest.com/sheets/78eb891c-7f42-4ed9-8290-759dc526528a";
-// Bytt til URL-en for gavekort-arket ditt i SheetBest.
-const GIFT_CARD_SHEETBEST_URL =
+// Ett felles SheetBest-ark for booking, spillforsøk og vinnere.
+const SHARED_SHEETBEST_URL =
   "https://api.sheetbest.com/sheets/17766096-0f6c-4f4a-b242-ac824a3d6585";
 const MAX_DAILY_ATTEMPTS = 5;
 const ATTEMPT_WINDOW_MS = 24 * 60 * 60 * 1000;
@@ -158,7 +155,7 @@ function formatRemainingTime(milliseconds) {
 }
 
 async function fetchSheetEntries() {
-  const response = await fetch(GAME_SHEETBEST_URL);
+  const response = await fetch(SHARED_SHEETBEST_URL);
 
   if (!response.ok) {
     throw new Error("Kunne ikke hente data fra SheetBest");
@@ -251,16 +248,12 @@ async function refreshGameState(options = {}) {
 }
 
 async function logGameEntry(payload) {
-  const isClaimEntry = payload.record_type === "win_claim";
-  const targetUrl = isClaimEntry ? GIFT_CARD_SHEETBEST_URL : GAME_SHEETBEST_URL;
-
-  const response = await fetch(targetUrl, {
+  const response = await fetch(SHARED_SHEETBEST_URL, {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ...payload,
-      sheet_type: payload.record_type || payload.type,
       submitted_at: new Date().toISOString(),
     }),
   });
@@ -388,11 +381,10 @@ if (gameBtn && timerDisplay && gameMessage) {
 
       try {
         await logGameEntry({
-          type: GAME_ATTEMPT_TYPE,
-          record_type: "game_attempt",
           attempt_status: attemptStatus,
           result_time: finalTime,
           attempts_used_today: currentState.attempts.length + 1,
+          type: GAME_ATTEMPT_TYPE,
           use_status: attemptStatus === "win" ? "needs_claim" : "attempted",
           win_code: attemptStatus === "win" ? pendingWinCode : "",
         });
@@ -454,13 +446,12 @@ if (winForm) {
 
     try {
       await logGameEntry({
-        type: GAME_GIFT_CARD_MODE ? "giftcard" : GAME_WIN_CLAIM_TYPE,
-        record_type: "win_claim",
-        claim_status: GAME_GIFT_CARD_MODE ? "giftcard_submitted" : "submitted",
-        use_status: GAME_GIFT_CARD_MODE ? "giftcard_unused" : "unused",
-        win_code: pendingWinCode,
-        result_time: pendingResultTime,
         ...data,
+        result_time: pendingResultTime,
+        win_code: pendingWinCode,
+        claim_status: "submitted",
+        use_status: "unused",
+        type: GAME_WIN_CLAIM_TYPE,
       });
 
       if (winStatus) {

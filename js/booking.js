@@ -3,11 +3,12 @@
   emailjs.init("5SuUIn7ldp9MurDAm");
 })();
 
-// Bytt til URL-en for booking-arket ditt i SheetBest.
-const BOOKING_SHEETBEST_URL =
+// Ett felles SheetBest-ark for booking og spillvinnere.
+const SHARED_SHEETBEST_URL =
   "https://api.sheetbest.com/sheets/17766096-0f6c-4f4a-b242-ac824a3d6585";
 
 const MIN_BIRTHDAY_GROUP = 10;
+const MIN_BOOKING_NOTICE_MS = 48 * 60 * 60 * 1000;
 
 const BOOKING_PACKAGES = {
   "Bursdag 10-12": {
@@ -57,6 +58,26 @@ function getSelectedBookingPackage(packageName) {
   return BOOKING_PACKAGES[packageName] || null;
 }
 
+function getMinimumBookingDate() {
+  const minDate = new Date(Date.now() + MIN_BOOKING_NOTICE_MS);
+  const year = minDate.getFullYear();
+  const month = String(minDate.getMonth() + 1).padStart(2, "0");
+  const day = String(minDate.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function isBookingDateValid(dateValue) {
+  const minimumDate = getMinimumBookingDate();
+  return Boolean(dateValue) && dateValue >= minimumDate;
+}
+
+const datePicker = document.getElementById("date-picker");
+
+if (datePicker) {
+  datePicker.min = getMinimumBookingDate();
+}
+
 function buildBookingSummary(data, bookingPackage, seats) {
   const totalAmount = bookingPackage.pricePerPerson * seats;
 
@@ -70,6 +91,7 @@ function buildBookingSummary(data, bookingPackage, seats) {
     price_per_person: bookingPackage.pricePerPerson,
     min_people: MIN_BIRTHDAY_GROUP,
     total_amount: totalAmount,
+    type: "booking",
   };
 }
 
@@ -88,6 +110,7 @@ document
     const data = Object.fromEntries(formData.entries());
     const bookingPackage = getSelectedBookingPackage(data.package);
     const requestedSeats = parseInt(data.seats, 10);
+    const minimumBookingDate = getMinimumBookingDate();
 
     if (!bookingPackage) {
       alert("Velg et bursdagsopplegg først.");
@@ -98,6 +121,15 @@ document
 
     if (Number.isNaN(requestedSeats) || requestedSeats < MIN_BIRTHDAY_GROUP) {
       alert(`Bursdagsbooking krever minst ${MIN_BIRTHDAY_GROUP} personer.`);
+      btn.innerText = originalText;
+      btn.disabled = false;
+      return;
+    }
+
+    if (!isBookingDateValid(data.date)) {
+      alert(
+        `Bookingen må være minst 48 timer fram i tid. Velg ${minimumBookingDate} eller senere.`,
+      );
       btn.innerText = originalText;
       btn.disabled = false;
       return;
@@ -118,7 +150,7 @@ document
       };
 
       // 2. Lagre i SheetBest-arket for booking
-      await fetch(BOOKING_SHEETBEST_URL, {
+      await fetch(SHARED_SHEETBEST_URL, {
         method: "POST",
         mode: "cors",
         headers: { "Content-Type": "application/json" },
