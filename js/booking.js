@@ -135,53 +135,68 @@ document
       return;
     }
 
+    const bookingPayload = buildBookingSummary(
+      data,
+      bookingPackage,
+      requestedSeats,
+    );
+
     try {
-      // 1. Regn ut pris for bursdagspakken
       const totalt = bookingPackage.pricePerPerson * requestedSeats;
       const netto = Math.round(totalt / 1.12);
       const mva = totalt - netto;
 
       const emailParams = {
-        ...buildBookingSummary(data, bookingPackage, requestedSeats),
+        ...bookingPayload,
         price_per_unit: bookingPackage.pricePerPerson,
         net_amount: netto,
         mva_amount: mva,
         total_amount: totalt,
       };
 
-      // 2. Lagre i SheetBest-arket for booking
-      await fetch(SHARED_SHEETBEST_URL, {
+      const sheetResponse = await fetch(SHARED_SHEETBEST_URL, {
         method: "POST",
         mode: "cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          buildBookingSummary(data, bookingPackage, requestedSeats),
-        ),
+        body: JSON.stringify(bookingPayload),
       });
 
-      // 3. Send e-post via EmailJS
-      await emailjs.send("service_8erarue", "template_baqv2nx", emailParams);
+      if (!sheetResponse.ok) {
+        throw new Error(`SheetBest svarte med ${sheetResponse.status}`);
+      }
+
+      let emailFailed = false;
+      try {
+        await emailjs.send("service_8erarue", "template_baqv2nx", emailParams);
+      } catch (emailError) {
+        emailFailed = true;
+        console.error("Kunne ikke sende e-post:", emailError);
+      }
 
       alert(
-        "Takk, " +
-          data.from_name +
-          "! Bursdagsbookingen er sendt.\n\n" +
-          "Vi har registrert " +
-          requestedSeats +
-          " personer for " +
-          bookingPackage.label +
-          ".\n\n" +
-          "VIKTIG: Sjekk søppelpost-mappen din hvis du ikke ser bekreftelsen i innboksen!",
+        emailFailed
+          ? "Bookingen ble lagret i SheetBest, men e-posten kunne ikke sendes. Sjekk EmailJS-oppsettet."
+          : "Takk, " +
+              data.from_name +
+              "! Bursdagsbookingen er sendt.\n\n" +
+              "Vi har registrert " +
+              requestedSeats +
+              " personer for " +
+              bookingPackage.label +
+              ".\n\n" +
+              "VIKTIG: Sjekk søppelpost-mappen din hvis du ikke ser bekreftelsen i innboksen!",
       );
 
-      this.reset();
-      document.getElementById("booking-section").classList.add("disabled");
-      document.getElementById("selected-package-display").innerText =
-        "Ingen valgt";
+      if (!emailFailed) {
+        this.reset();
+        document.getElementById("booking-section").classList.add("disabled");
+        document.getElementById("selected-package-display").innerText =
+          "Ingen valgt";
+      }
     } catch (error) {
       console.error("Systemfeil:", error);
       alert(
-        "Det skjedde en feil. Sjekk at du har valgt et bursdagsopplegg med minst 10 personer, eller prøv igjen senere.",
+        `Det skjedde en feil under lagring eller sending av booking: ${error.message}`,
       );
     } finally {
       btn.innerText = originalText;
