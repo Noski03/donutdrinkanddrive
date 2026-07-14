@@ -92,6 +92,7 @@ function buildBookingSummary(data, bookingPackage, seats) {
     min_people: MIN_BIRTHDAY_GROUP,
     total_amount: totalAmount,
     type: "booking",
+    submitted_at: new Date().toISOString(),
   };
 }
 
