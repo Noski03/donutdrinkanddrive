@@ -112,6 +112,7 @@ const GAME_GIFT_CARD_MODE = GAME_QUERY_PARAMS.has("giftcard");
 let startTime;
 let timerInterval;
 let isRunning = false;
+let isSavingAttempt = false;
 let pendingWinSubmission = false;
 let pendingResultTime = "";
 let pendingWinCode = "";
@@ -343,6 +344,10 @@ if (gameBtn && timerDisplay && gameMessage) {
   }
 
   gameBtn.addEventListener("click", async () => {
+    if (isSavingAttempt) {
+      return;
+    }
+
     if (pendingWinSubmission) {
       gameMessage.textContent =
         "Registrer gevinsten i skjemaet før du prøver igjen.";
@@ -379,6 +384,9 @@ if (gameBtn && timerDisplay && gameMessage) {
 
       const attemptStatus = finalTime === "10.00" ? "win" : "fail";
 
+      isSavingAttempt = true;
+      gameBtn.disabled = true;
+
       try {
         await logGameEntry({
           attempt_status: attemptStatus,
@@ -397,6 +405,8 @@ if (gameBtn && timerDisplay && gameMessage) {
         gameBtn.style.background = "#9d32a8";
         await refreshGameState();
         return;
+      } finally {
+        isSavingAttempt = false;
       }
 
       const updatedState = await refreshGameState({ keepLabel: true });
