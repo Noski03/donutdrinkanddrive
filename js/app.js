@@ -151,6 +151,27 @@ const GAME_WIN_CLAIM_TYPE = "10-second-win-claim";
 const GAME_QUERY_PARAMS = new URLSearchParams(window.location.search);
 const GAME_TEST_MODE = GAME_QUERY_PARAMS.has("testwin");
 const GAME_GIFT_CARD_MODE = GAME_QUERY_PARAMS.has("giftcard");
+const CLIENT_ID_STORAGE_KEY = "ddad_client_id";
+
+// Forsøksgrensen er per nettleser/enhet, ikke global for alle besøkende.
+// Uten innlogging er en lokalt lagret client-id det nærmeste vi kommer
+// "per person" å telle forsøk på, siden alle spillere deler samme SheetBest-ark.
+function getClientId() {
+  try {
+    let id = localStorage.getItem(CLIENT_ID_STORAGE_KEY);
+
+    if (!id) {
+      id = `client-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem(CLIENT_ID_STORAGE_KEY, id);
+    }
+
+    return id;
+  } catch (error) {
+    return "no-storage";
+  }
+}
+
+const CLIENT_ID = getClientId();
 
 let startTime;
 let timerInterval;
@@ -212,6 +233,10 @@ async function fetchSheetEntries() {
 function getRecentGameAttempts(entries, now = Date.now()) {
   return entries.filter((entry) => {
     if (entry.type !== GAME_ATTEMPT_TYPE) {
+      return false;
+    }
+
+    if (entry.client_id !== CLIENT_ID) {
       return false;
     }
 
@@ -438,6 +463,7 @@ if (gameBtn && timerDisplay && gameMessage) {
           type: GAME_ATTEMPT_TYPE,
           use_status: attemptStatus === "win" ? "needs_claim" : "attempted",
           win_code: attemptStatus === "win" ? pendingWinCode : "",
+          client_id: CLIENT_ID,
         });
       } catch (error) {
         console.error("Kunne ikke lagre forsøket:", error);
@@ -505,6 +531,7 @@ if (winForm) {
         claim_status: "submitted",
         use_status: "unused",
         type: GAME_WIN_CLAIM_TYPE,
+        client_id: CLIENT_ID,
       });
 
       if (winStatus) {
