@@ -152,6 +152,7 @@ const GAME_QUERY_PARAMS = new URLSearchParams(window.location.search);
 const GAME_TEST_MODE = GAME_QUERY_PARAMS.has("testwin");
 const GAME_GIFT_CARD_MODE = GAME_QUERY_PARAMS.has("giftcard");
 const CLIENT_ID_STORAGE_KEY = "ddad_client_id";
+const GAME_ATTEMPTS_STORAGE_KEY = "ddad_game_attempts";
 
 // Forsøksgrensen er per nettleser/enhet, ikke global for alle besøkende.
 // Uten innlogging er en lokalt lagret client-id det nærmeste vi kommer
@@ -180,7 +181,6 @@ let isSavingAttempt = false;
 let pendingWinSubmission = false;
 let pendingResultTime = "";
 let pendingWinCode = "";
-let latestGameState = null;
 
 const gameBtn = document.getElementById("game-btn");
 const timerDisplay = document.getElementById("timer-display");
@@ -192,20 +192,6 @@ const winSubmitBtn = document.getElementById("win-submit");
 const winStatus = document.getElementById("win-status");
 const winResultTime = document.getElementById("win-result-time");
 const winAttemptsUsed = document.getElementById("win-attempts-used");
-
-function parseSheetTimestamp(entry) {
-  const rawTimestamp =
-    entry.submitted_at ||
-    entry.created_at ||
-    entry.attempted_at ||
-    entry.timestamp ||
-    entry.date_time ||
-    entry.date ||
-    "";
-  const parsedTimestamp = Date.parse(rawTimestamp);
-
-  return Number.isNaN(parsedTimestamp) ? 0 : parsedTimestamp;
-}
 
 function formatRemainingTime(milliseconds) {
   const totalMinutes = Math.max(0, Math.ceil(milliseconds / 60000));
@@ -219,30 +205,46 @@ function formatRemainingTime(milliseconds) {
   return `${minutes} min`;
 }
 
-async function fetchSheetEntries() {
-  const response = await fetch(SHARED_SHEETBEST_URL);
+// Forsøkstelleren er lagret lokalt i denne nettleseren, ikke i det delte
+// SheetBest-arket. SheetBest dropper stille alle felt som ikke allerede
+// finnes som kolonne (f.eks. en client-id), så å telle "mine" forsøk ved
+// å lese tilbake fra arket er upålitelig. localStorage gir en umiddelbar,
+// pålitelig telling per nettleser/enhet, uavhengig av nett og sheet-skjema.
+function getStoredAttemptTimestamps(now = Date.now()) {
+  let timestamps = [];
 
-  if (!response.ok) {
-    throw new Error("Kunne ikke hente data fra SheetBest");
+  try {
+    const raw = localStorage.getItem(GAME_ATTEMPTS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    timestamps = Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    timestamps = [];
   }
 
-  const entries = await response.json();
-  return Array.isArray(entries) ? entries : [];
+  const recent = timestamps.filter(
+    (timestamp) => typeof timestamp === "number" && now - timestamp < ATTEMPT_WINDOW_MS,
+  );
+
+  try {
+    localStorage.setItem(GAME_ATTEMPTS_STORAGE_KEY, JSON.stringify(recent));
+  } catch (error) {
+    // localStorage kan være blokkert (privat modus e.l.) - fortsetter uten lagring
+  }
+
+  return recent;
 }
 
-function getRecentGameAttempts(entries, now = Date.now()) {
-  return entries.filter((entry) => {
-    if (entry.type !== GAME_ATTEMPT_TYPE) {
-      return false;
-    }
+function recordAttemptTimestamp(now = Date.now()) {
+  const recent = getStoredAttemptTimestamps(now);
+  recent.push(now);
 
-    if (entry.client_id !== CLIENT_ID) {
-      return false;
-    }
+  try {
+    localStorage.setItem(GAME_ATTEMPTS_STORAGE_KEY, JSON.stringify(recent));
+  } catch (error) {
+    // localStorage kan være blokkert (privat modus e.l.) - fortsetter uten lagring
+  }
 
-    const timestamp = parseSheetTimestamp(entry);
-    return timestamp > 0 && now - timestamp < ATTEMPT_WINDOW_MS;
-  });
+  return recent;
 }
 
 function getLockoutMessage(attempts, now = Date.now()) {
@@ -250,9 +252,7 @@ function getLockoutMessage(attempts, now = Date.now()) {
     return "";
   }
 
-  const oldestAttempt = Math.min(
-    ...attempts.map((attempt) => parseSheetTimestamp(attempt)),
-  );
+  const oldestAttempt = Math.min(...attempts);
   const unlockIn = oldestAttempt + ATTEMPT_WINDOW_MS - now;
 
   return `Du har brukt opp dagens 5 forsøk. Prøv igjen om ${formatRemainingTime(unlockIn)}.`;
@@ -269,8 +269,6 @@ function applyGameState(gameState, options = {}) {
   if (attemptCounter) {
     attemptCounter.textContent = `${gameState.attempts.length}/${MAX_DAILY_ATTEMPTS} forsøk brukt i dag. ${attemptsLeft} igjen.`;
   }
-
-  latestGameState = gameState;
 
   if (pendingWinSubmission) {
     gameBtn.disabled = true;
@@ -297,23 +295,11 @@ function applyGameState(gameState, options = {}) {
   }
 }
 
-async function refreshGameState(options = {}) {
-  try {
-    const entries = await fetchSheetEntries();
-    const attempts = getRecentGameAttempts(entries);
-    const gameState = { entries, attempts };
-    applyGameState(gameState, options);
-    return gameState;
-  } catch (error) {
-    console.error("Kunne ikke oppdatere spillstatus:", error);
-
-    if (attemptCounter) {
-      attemptCounter.textContent =
-        "Klarte ikke å hente dagens forsøk akkurat nå.";
-    }
-
-    return latestGameState || { entries: [], attempts: [] };
-  }
+function refreshGameState(options = {}) {
+  const attempts = getStoredAttemptTimestamps();
+  const gameState = { attempts };
+  applyGameState(gameState, options);
+  return gameState;
 }
 
 async function logGameEntry(payload) {
@@ -423,7 +409,7 @@ if (gameBtn && timerDisplay && gameMessage) {
       return;
     }
 
-    const currentState = await refreshGameState({ keepLabel: isRunning });
+    const currentState = refreshGameState({ keepLabel: isRunning });
 
     if (currentState.attempts.length >= MAX_DAILY_ATTEMPTS && !isRunning) {
       return;
@@ -452,6 +438,12 @@ if (gameBtn && timerDisplay && gameMessage) {
 
       const attemptStatus = finalTime === "10.00" ? "win" : "fail";
 
+      // Forsøket telles lokalt med én gang - det skjedde, uavhengig av om
+      // det etterpå lar seg lagre i SheetBest eller ikke.
+      const updatedAttempts = recordAttemptTimestamp();
+      const updatedState = { attempts: updatedAttempts };
+      applyGameState(updatedState, { keepLabel: true });
+
       isSavingAttempt = true;
       gameBtn.disabled = true;
 
@@ -459,38 +451,30 @@ if (gameBtn && timerDisplay && gameMessage) {
         await logGameEntry({
           attempt_status: attemptStatus,
           result_time: finalTime,
-          attempts_used_today: currentState.attempts.length + 1,
+          attempts_used_day: updatedAttempts.length,
           type: GAME_ATTEMPT_TYPE,
           use_status: attemptStatus === "win" ? "needs_claim" : "attempted",
           win_code: attemptStatus === "win" ? pendingWinCode : "",
           client_id: CLIENT_ID,
         });
       } catch (error) {
-        console.error("Kunne ikke lagre forsøket:", error);
-        gameMessage.textContent =
-          "Kunne ikke lagre forsøket akkurat nå. Prøv igjen når forbindelsen er tilbake.";
-        gameMessage.style.color = "#ff3333";
-        gameBtn.textContent = "START";
-        gameBtn.style.background = "#9d32a8";
-        await refreshGameState();
-        return;
+        console.error("Kunne ikke lagre forsøket i SheetBest:", error);
       } finally {
         isSavingAttempt = false;
       }
-
-      const updatedState = await refreshGameState({ keepLabel: true });
 
       if (finalTime === "10.00") {
         gameMessage.textContent =
           "🎉 Trefferen er registrert. Fyll ut skjemaet under for å sende gevinsten videre.";
         gameMessage.style.color = "#00ffcc";
-        showWinForm(finalTime, updatedState.attempts.length);
+        showWinForm(finalTime, updatedAttempts.length);
       } else {
         const diff = (finalTime - 10.0).toFixed(2);
+        const attemptsLeft = Math.max(0, MAX_DAILY_ATTEMPTS - updatedAttempts.length);
         gameMessage.textContent =
           diff > 0
-            ? `Du var ${diff} sekunder for treg. ${Math.max(0, MAX_DAILY_ATTEMPTS - updatedState.attempts.length)} forsøk igjen i dag.`
-            : `Du var ${Math.abs(diff)} sekunder for rask. ${Math.max(0, MAX_DAILY_ATTEMPTS - updatedState.attempts.length)} forsøk igjen i dag.`;
+            ? `Du var ${diff} sekunder for treg. ${attemptsLeft} forsøk igjen i dag.`
+            : `Du var ${Math.abs(diff)} sekunder for rask. ${attemptsLeft} forsøk igjen i dag.`;
         gameMessage.style.color = "#ff3333";
       }
 
