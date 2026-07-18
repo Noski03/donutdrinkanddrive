@@ -9,6 +9,7 @@ body {
   background-color: #0b0b0b; /* Nesten helt svart */
   font-family: "Inter", sans-serif;
   color: white;
+  overflow-x: hidden;
 }
 
 .container {
@@ -53,7 +54,7 @@ body {
 
 /* Størrelsen på selve bil-logoen */
 .main-header .logo-img {
-  height: 40px; /* Juster denne hvis du vil ha bil-bildet større eller mindre */
+  height: clamp(20px, 6vw, 40px); /* Juster denne hvis du vil ha bil-bildet større eller mindre */
   width: auto;
   display: block;
 }
@@ -61,9 +62,9 @@ body {
 /* Selve tekstboksen - tvinger ordene sammen på én linje */
 .main-header .logo-text-wrapper {
   font-family: "Orbitron", sans-serif;
-  font-size: 1.5rem;
+  font-size: clamp(0.5rem, 2.4vw, 1.5rem);
   font-weight: bold;
-  letter-spacing: 2px;
+  letter-spacing: clamp(0.3px, 0.3vw, 2px);
   display: flex;
   gap: 0; /* ABSOLUTT NULL mellomrom mellom DONUT, DRINK, AND, DRIVE */
   white-space: nowrap;
@@ -127,6 +128,61 @@ body {
   box-shadow: 0 0 25px rgba(157, 50, 168, 0.7);
   transform: translateY(-2px);
 }
+
+/* --- HEADER ACTIONS / HAMBURGER --- */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 1002;
+  flex-shrink: 0;
+}
+
+.hamburger-line {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 /* Hero Seksjon */
 .hero {
   position: relative;
@@ -223,10 +279,11 @@ body {
 /* Tekst-styling */
 .hero-content h1 {
   font-family: "Orbitron", sans-serif;
-  font-size: 4rem;
+  font-size: clamp(2.2rem, 8vw, 4rem);
   letter-spacing: 3px;
   margin-bottom: 20px;
   text-shadow: 0 0 20px rgba(157, 50, 168, 0.8);
+  padding: 0 15px;
 }
 
 .hero-content p {
@@ -234,13 +291,16 @@ body {
   max-width: 700px;
   margin: 0 auto 30px;
   line-height: 1.6;
+  padding: 0 20px;
 }
 
 /* Knapper i Hero */
 .hero-btns {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+  padding: 0 20px;
 }
 
 .btn-lilla-lg {
@@ -500,6 +560,12 @@ body {
   width: 100%; /* Sørger for at den dekker hele bredden */
 }
 
+/* Overstyrer den globale flex-containeren så footer-grid og footer-bottom
+   stables under hverandre i stedet for å presses side om side */
+.main-footer .container {
+  display: block;
+}
+
 .footer-glow {
   position: absolute;
   top: 0;
@@ -608,6 +674,9 @@ html {
   /* Gjør at den faste headeren ikke kutter toppen av overskriftene når du ruller ned */
 
   scroll-padding-top: 100px;
+
+  /* Hindrer horisontal scroll fra den skjulte mobil-navmenyen (fixed + transform) */
+  overflow-x: hidden;
 }
 
 /* --- DETALJSEKSJONER BASE --- */
@@ -673,13 +742,15 @@ html {
 .details-text h2 {
   font-family: "Orbitron", sans-serif;
 
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.6rem, 5vw, 3rem);
 
   font-weight: 900;
 
   letter-spacing: 1px;
 
   margin: 0 0 25px 0;
+
+  overflow-wrap: break-word;
 }
 
 .purple-glow {
@@ -1218,5 +1289,132 @@ a.logo * {
 
   .about-text {
     text-align: center;
+  }
+}
+
+/* ==========================================================================
+   HEADER / NAV MOBILRESPONSIVITET
+   ========================================================================== */
+
+@media (max-width: 880px) {
+  .main-header .container {
+    padding: 12px 16px;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .main-header .nav-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100dvh;
+    width: min(78vw, 320px);
+    background: rgba(11, 11, 11, 0.98);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(157, 50, 168, 0.3);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+    padding: 110px 30px 40px;
+    box-sizing: border-box;
+    transform: translateX(100%);
+    transition: transform 0.35s ease;
+    z-index: 1001;
+  }
+
+  .main-header .nav-menu.open {
+    transform: translateX(0);
+  }
+
+  .main-header .nav-menu ul {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .main-header .nav-menu ul li a {
+    font-size: 1.15rem;
+  }
+
+  .nav-backdrop.open {
+    display: block;
+    opacity: 1;
+  }
+
+  .main-header .btn-lilla {
+    padding: 9px 16px;
+    font-size: 0.7rem;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-header .logo {
+    gap: 6px;
+  }
+
+  .main-header .btn-lilla {
+    padding: 8px 12px;
+    font-size: 0.62rem;
+  }
+
+  .hamburger-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .hamburger-line {
+    width: 20px;
+  }
+}
+
+body.nav-locked {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   ØVRIG MOBILRESPONSIVITET (HERO, SPILL, KORT)
+   ========================================================================== */
+
+@media (max-width: 600px) {
+  .hero {
+    height: auto;
+    min-height: 85vh;
+    padding: 100px 0 60px;
+  }
+
+  .hero-btns {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .btn-lilla-lg,
+  .btn-outline {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 16px 20px;
+  }
+
+  .feature-card {
+    padding: 30px 24px;
+  }
+
+  .game-box {
+    padding: 35px 22px;
+  }
+
+  #timer-display {
+    font-size: 3.4rem;
+  }
+
+  #game-btn {
+    padding: 18px 30px;
+    font-size: 1.15rem;
   }
 }

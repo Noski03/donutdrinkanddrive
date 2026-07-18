@@ -1,3 +1,46 @@
+// --- MOBIL HAMBURGERMENY ---
+const hamburgerBtn = document.getElementById("hamburger-btn");
+const navMenu = document.getElementById("nav-menu");
+const navBackdrop = document.getElementById("nav-backdrop");
+
+if (hamburgerBtn && navMenu && navBackdrop) {
+  const closeMobileNav = () => {
+    navMenu.classList.remove("open");
+    navBackdrop.classList.remove("open");
+    hamburgerBtn.classList.remove("active");
+    hamburgerBtn.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("nav-locked");
+  };
+
+  const openMobileNav = () => {
+    navMenu.classList.add("open");
+    navBackdrop.classList.add("open");
+    hamburgerBtn.classList.add("active");
+    hamburgerBtn.setAttribute("aria-expanded", "true");
+    document.body.classList.add("nav-locked");
+  };
+
+  hamburgerBtn.addEventListener("click", () => {
+    if (navMenu.classList.contains("open")) {
+      closeMobileNav();
+    } else {
+      openMobileNav();
+    }
+  });
+
+  navBackdrop.addEventListener("click", closeMobileNav);
+
+  navMenu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMobileNav);
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 880) {
+      closeMobileNav();
+    }
+  });
+}
+
 const maskContainer = document.getElementById("mask-container");
 const maskLayer = document.getElementById("mask-layer");
 

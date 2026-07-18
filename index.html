@@ -25,15 +25,34 @@
           </div>
         </a>
 
-        <nav class="nav-menu">
+        <nav class="nav-menu" id="nav-menu">
           <ul>
+            <li><a href="#om-oss">Om oss</a></li>
+            <li><a href="#dropin-info">Drop-in</a></li>
+            <li><a href="#grupper-info">Grupper</a></li>
+            <li><a href="#bedrift-info">Bedrift</a></li>
             <!--<li><a href="html/leaderboard.html">Banerekorder</a></li>-->
           </ul>
         </nav>
-        <div class="header-cta">
-          <a href="html/booking.html" class="btn-lilla">BOOK NÅ</a>
+        <div class="header-actions">
+          <div class="header-cta">
+            <a href="html/booking.html" class="btn-lilla">BOOK NÅ</a>
+          </div>
+          <button
+            type="button"
+            class="hamburger-btn"
+            id="hamburger-btn"
+            aria-label="Åpne meny"
+            aria-expanded="false"
+            aria-controls="nav-menu"
+          >
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
         </div>
       </div>
+      <div class="nav-backdrop" id="nav-backdrop"></div>
     </header>
     <section class="hero">
       <div class="video-container">
@@ -79,12 +98,12 @@
             bilentusiaster som ønsker en opplevelse utenom det vanlige.
           </p>
           <p>
-            Enten du kommer innom for en kjapp drop-in for å knuse banerekorden
-            eller kjøre mot venner og beskjente eller feirer bursdag med
-            gjengen, eller vil ha en teambuilding kollegaene faktisk kommer til
-            å snakke om i lunsjen - så fikser vi racingen, maten og den unike
-            stemningen. Lokalet kan leies til lukkede arrangementer, og vi
-            skreddersyr alt fra A til Å for å gjøre kvelden uforglemmelig.
+            Enten du kommer innom for en kjapp drop-in for å knuse banerekorden,
+            kjører mot venner og bekjente, feirer bursdag med gjengen, eller vil
+            ha en teambuilding kollegaene faktisk kommer til å snakke om i
+            lunsjen - så fikser vi racingen, maten og den unike stemningen.
+            Lokalet kan leies til lukkede arrangementer, og vi skreddersyr alt
+            fra A til Å for å gjøre kvelden uforglemmelig.
           </p>
           <p>
             Vi har også Bergens største innendørs sandkasse med fjernstyrte
@@ -320,8 +339,8 @@
 
             <p>
               Skal du arrangere kompisgjeng-kveld, bursdag eller et episk
-              utdrikningslag? Vi rigger i stand et fullverdig mesterskap for
-              dere. Her blir det knallhard kniving om hundredelene!
+              utdrikningslag? Vi rigger til et fullverdig mesterskap for dere.
+              Her blir det knallhard kniving om hundredelene!
             </p>
 
             <ul class="details-list">
@@ -339,12 +358,12 @@
 
           <div class="details-stats-box horizontal">
             <div class="package-info-card">
-              <h4>Lukket arangement</h4>
+              <h4>Lukket arrangement</h4>
 
               <p>
-                kl 20:00 - 22:00. kr 200,- pr pers. kl 20:00 - 23:00. kr 300,-
-                pr pers. Minimum 10 personer. Inkluderer donuts og valgfri
-                drikke, med påfyll av drikke.
+                Kl. 20:00-22:00: kr 200,- pr. person. Kl. 20:00-23:00: kr 300,-
+                pr. person. Minimum 10 personer. Inkluderer donuts og drikke med
+                fri påfyll.
               </p>
 
               <span class="pack-price">fra 200,- pr sjåfør</span>
@@ -364,7 +383,7 @@
 
             <p>
               Glem tørre foredrag og kjedelige kurs. Ta med kollegaene på en
-              adrenalinfylt kveld som garantert blir samtaleevne rundt
+              adrenalinfylt kveld som garantert blir samtaleemnet rundt
               lunsjbordet i ukene som kommer. Trigger konkurranseinstinktet på
               tvers av avdelingene!
             </p>
