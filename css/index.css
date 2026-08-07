@@ -586,9 +586,20 @@ body {
   width: 100%;
 }
 
+.footer-logo-link {
+  text-decoration: none;
+  display: inline-block;
+  transition: opacity 0.3s ease;
+}
+
+.footer-logo-link:hover {
+  opacity: 0.8;
+}
+
 .footer-brand .logo-text {
   font-size: 1.5rem;
   font-weight: 900;
+  color: white;
   display: block;
   margin-bottom: 20px;
 }

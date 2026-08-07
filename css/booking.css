@@ -97,6 +97,12 @@ body {
   text-shadow: 0 0 20px rgba(157, 50, 168, 0.8);
 }
 
+.booking-policy-note {
+  color: #9d32a8;
+  font-size: 0.95rem;
+  margin-top: 15px;
+}
+
 /* --- 2. PAKKER (MIDTEN) --- */
 .packages-grid {
   display: grid;
@@ -190,6 +196,25 @@ body {
   filter: blur(2px);
 }
 
+.form-container.vilkar-content h3 {
+  font-family: "Orbitron", sans-serif;
+  margin-bottom: 10px;
+}
+
+.form-container.vilkar-content p {
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.form-container.vilkar-content p:last-child {
+  margin-bottom: 0;
+}
+
+.form-container.vilkar-content a {
+  color: #9d32a8;
+}
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -205,6 +230,31 @@ select {
   color: white;
   border-radius: 12px;
   font-size: 1rem;
+}
+
+.terms-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.terms-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  accent-color: #9d32a8;
+  cursor: pointer;
+}
+
+.terms-check a {
+  color: #9d32a8;
+  text-decoration: underline;
 }
 
 .btn-confirm {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Book Din Opplevelse | DonutDrive</title>
+    <title>Book Din Opplevelse | Donut Drink And Drive</title>
     <link rel="stylesheet" href="../css/index.css" />
     <link rel="stylesheet" href="../css/booking.css" />
     <link
@@ -21,7 +21,7 @@
         <a href="../index.html" class="logo">
           <img
             src="../videoer/ChatGPT Image 19. mai 2026, 10_29_42.png"
-            alt="Donut Drink and Drive Logo"
+            alt="Donut Drink And Drive Logo"
             class="logo-img"
           />
           <span class="donut">DONUT</span><span class="drive">DRINK</span
@@ -30,6 +30,7 @@
         <nav class="nav-menu">
           <ul>
             <li><a href="../index.html">Hjem</a></li>
+            <li><a href="vilkar.html">Vilkår</a></li>
             <!--<li><a href="./leaderboard.html">Banerekorder</a></li>-->
           </ul>
         </nav>
@@ -38,12 +39,16 @@
 
     <main class="container">
       <section class="booking-hero">
-        <h1>BOOK DIN <span class="glow-text">BURSDAG</span></h1>
+        <h1>BOOK DIN <span class="glow-text">OPPLEVELSE</span></h1>
         <p>
-          Bursdagsopplegg kan bookes for minst 10 personer. Bookingen må være
-          minst 48 timer fram i tid. Drop-in er åpent fra 14:00 til 20:00 og kan
-          ikke forhåndsbookes. Drop-in gjelder for alle fra 0 til 100 år, og
+          Alle bookinger krever minst 10 personer, og må gjøres minst 48 timer
+          fram i tid. Drop-in er åpent fra 16:00 til 20:00 og kan ikke
+          forhåndsbookes. Drop-in gjelder for alle fra 0 til 100 år, og
           minstehøyden er 80 cm.
+        </p>
+        <p class="booking-policy-note">
+          Betaling skjer på forhånd via Vipps når bookingen bekreftes.
+          Avbestilling må skje senest 24 timer før oppsatt tid.
         </p>
       </section>
 
@@ -68,7 +73,6 @@
         </div>
 
         <div class="booking-card featured">
-          <div class="badge">Anbefalt</div>
           <div class="card-header">
             <h3>Bursdag 12-14</h3>
             <div class="price">200,- / pers</div>
@@ -140,7 +144,12 @@
               <input
                 type="tel"
                 name="phone"
-                placeholder="Telefonnummer"
+                placeholder="Telefonnummer (8 sifre)"
+                pattern="[0-9]{8}"
+                minlength="8"
+                maxlength="8"
+                inputmode="numeric"
+                title="Skriv inn et norsk mobilnummer med 8 sifre, uten mellomrom eller landkode"
                 required
               />
             </div>
@@ -168,6 +177,12 @@
               <input type="date" name="date" required id="date-picker" />
               <input type="text" value="Tid følger valgt opplegg" disabled />
             </div>
+
+            <label class="terms-check">
+              <input type="checkbox" name="terms_accepted" id="terms-accepted" required />
+              Jeg har lest og godtar
+              <a href="vilkar.html" target="_blank" rel="noopener">vilkårene for booking</a>
+            </label>
 
             <button type="submit" class="btn-confirm" id="submit-btn">
               SEND FORESPØRSEL
