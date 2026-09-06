@@ -78,6 +78,23 @@ if (datePicker) {
   datePicker.min = getMinimumBookingDate();
 }
 
+async function isSlotAlreadyBooked(date, packageLabel) {
+  const response = await fetch(SHARED_SHEETBEST_URL);
+
+  if (!response.ok) {
+    throw new Error(`Kunne ikke sjekke ledig tid (${response.status})`);
+  }
+
+  const rows = await response.json();
+
+  return rows.some(
+    (row) =>
+      row.type === "booking" &&
+      row.date === date &&
+      row.booking_window === packageLabel,
+  );
+}
+
 function buildBookingSummary(data, bookingPackage, seats) {
   const totalAmount = bookingPackage.pricePerPerson * seats;
 
@@ -130,6 +147,31 @@ document
     if (!isBookingDateValid(data.date)) {
       alert(
         `Bookingen må være minst 48 timer fram i tid. Velg ${minimumBookingDate} eller senere.`,
+      );
+      btn.innerText = originalText;
+      btn.disabled = false;
+      return;
+    }
+
+    let slotAlreadyBooked = false;
+    try {
+      slotAlreadyBooked = await isSlotAlreadyBooked(
+        data.date,
+        bookingPackage.label,
+      );
+    } catch (checkError) {
+      console.error("Kunne ikke sjekke ledig tid:", checkError);
+      alert(
+        "Kunne ikke sjekke om tiden er ledig akkurat nå. Prøv igjen om litt.",
+      );
+      btn.innerText = originalText;
+      btn.disabled = false;
+      return;
+    }
+
+    if (slotAlreadyBooked) {
+      alert(
+        `Beklager, "${bookingPackage.label}" den ${data.date} er allerede booket av noen andre. Velg en annen dato eller et annet tidspunkt.`,
       );
       btn.innerText = originalText;
       btn.disabled = false;
