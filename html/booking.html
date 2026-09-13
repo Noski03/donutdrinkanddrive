@@ -42,9 +42,9 @@
         <h1>BOOK DIN <span class="glow-text">OPPLEVELSE</span></h1>
         <p>
           Alle bookinger krever minst 10 personer, og må gjøres minst 48 timer
-          fram i tid. Drop-in er åpent fra 16:00 til 20:00 og kan ikke
-          forhåndsbookes. Drop-in gjelder for alle fra 0 til 100 år, og
-          minstehøyden er 80 cm.
+          fram i tid. Drop-in er åpent man-fre 16:00-20:00 og lør-søn
+          14:00-20:00, og kan ikke forhåndsbookes. Drop-in gjelder for alle fra
+          0 til 100 år, og minstehøyden er 80 cm.
         </p>
         <p class="booking-policy-note">
           Betaling skjer på forhånd via Vipps når bookingen bekreftes.
@@ -52,14 +52,41 @@
         </p>
       </section>
 
+      <section class="booking-included">
+        <span class="section-tag">Dette får dere</span>
+        <h2>Hva er inkludert i booking?</h2>
+        <ul class="details-list">
+          <li>
+            🏁 <strong>Leie av hele lokalet:</strong> kjør så mye hvert
+            barn/person ønsker og får tid til.
+          </li>
+          <li>
+            🍩 <strong>Mat & drikke:</strong> en donut pr. barn/person, og fri
+            tilgang til juice og kaffe.
+          </li>
+          <li>
+            🚜 <strong>Sandkasse:</strong> fri tilgang til sandkassen med
+            radiostyrte kjøretøy.
+          </li>
+          <li>
+            🎱 <strong>Spill:</strong> biljardbord og bordtennis.
+          </li>
+          <li>
+            🎂 <strong>Egen mat:</strong> det er mulig å ta med egen kake og
+            mat, vi har eget område for opphold og bespisning.
+          </li>
+        </ul>
+      </section>
+
       <div class="packages-grid">
         <div class="booking-card">
           <div class="card-header">
             <h3>Bursdag 10-12</h3>
-            <div class="price">200,- / pers</div>
+            <div class="price">2000,-</div>
           </div>
           <ul class="features">
-            <li>Minst 10 personer</li>
+            <li>Minst 10 personer inkludert</li>
+            <li>+200,- pr. person utover 10</li>
             <li>2 timer privat booking</li>
             <li>10:00 - 12:00</li>
           </ul>
@@ -75,10 +102,11 @@
         <div class="booking-card featured">
           <div class="card-header">
             <h3>Bursdag 12-14</h3>
-            <div class="price">200,- / pers</div>
+            <div class="price">2000,-</div>
           </div>
           <ul class="features">
-            <li>Minst 10 personer</li>
+            <li>Minst 10 personer inkludert</li>
+            <li>+200,- pr. person utover 10</li>
             <li>2 timer privat booking</li>
             <li>12:00 - 14:00</li>
           </ul>
@@ -94,10 +122,11 @@
         <div class="booking-card">
           <div class="card-header">
             <h3>Kveld 20-22</h3>
-            <div class="price">200,- / pers</div>
+            <div class="price">2000,-</div>
           </div>
           <ul class="features">
-            <li>Minst 10 personer</li>
+            <li>Minst 10 personer inkludert</li>
+            <li>+200,- pr. person utover 10</li>
             <li>2 timer privat booking</li>
             <li>20:00 - 22:00</li>
           </ul>
@@ -113,10 +142,11 @@
         <div class="booking-card">
           <div class="card-header">
             <h3>Kveld 20-23</h3>
-            <div class="price">300,- / pers</div>
+            <div class="price">3000,-</div>
           </div>
           <ul class="features">
-            <li>Minst 10 personer</li>
+            <li>Minst 10 personer inkludert</li>
+            <li>+300,- pr. person utover 10</li>
             <li>3 timer privat booking</li>
             <li>20:00 - 23:00</li>
           </ul>
@@ -128,6 +158,13 @@
             Velg denne
           </button>
         </div>
+      </div>
+
+      <div class="daytime-cta">
+        <p>Vil du booke på dagtid i ukedager (07:00 - 16:00)?</p>
+        <a href="mailto:post@ddad.no?subject=Booking%20dagtid%20ukedager"
+          >Send oss en henvendelse</a
+        >
       </div>
 
       <section class="form-section">
@@ -171,6 +208,31 @@
                 placeholder="E-post"
                 required
               />
+            </div>
+
+            <div class="form-row" id="birthday-kids-row" hidden>
+              <input
+                type="number"
+                name="birthday_kids"
+                id="birthday-kids-input"
+                min="1"
+                max="100"
+                step="1"
+                placeholder="Antall bursdagsbarn"
+              />
+              <input type="text" value="" disabled style="visibility:hidden" />
+            </div>
+
+            <div class="form-row" id="purpose-row" hidden>
+              <select name="purpose" id="purpose-select">
+                <option value="">Formål med arrangementet</option>
+                <option value="Bursdag">Bursdag</option>
+                <option value="Firmafest">Firmafest</option>
+                <option value="Utdrikningslag">Utdrikningslag</option>
+                <option value="Sosial sammenkomst">Sosial sammenkomst</option>
+                <option value="Annet">Annet</option>
+              </select>
+              <input type="text" value="" disabled style="visibility:hidden" />
             </div>
 
             <div class="form-row">

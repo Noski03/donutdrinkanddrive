@@ -45,12 +45,25 @@ function selectPackage(packageName) {
   const display = document.getElementById("selected-package-display");
   const input = document.getElementById("package-input");
   const section = document.getElementById("booking-section");
+  const birthdayKidsRow = document.getElementById("birthday-kids-row");
+  const purposeRow = document.getElementById("purpose-row");
 
   if (display && input && section) {
     display.innerText = packageName;
     input.value = packageName;
     section.classList.remove("disabled");
     section.scrollIntoView({ behavior: "smooth" });
+  }
+
+  const isBirthday = packageName.startsWith("Bursdag");
+  const isEvening = packageName.startsWith("Kveld");
+
+  if (birthdayKidsRow) {
+    birthdayKidsRow.hidden = !isBirthday;
+  }
+
+  if (purposeRow) {
+    purposeRow.hidden = !isEvening;
   }
 }
 
